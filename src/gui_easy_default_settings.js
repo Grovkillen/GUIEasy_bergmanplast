@@ -69,5 +69,3 @@ const defaultSettings = {
         }
     }
 };
-
-const patreon = {};

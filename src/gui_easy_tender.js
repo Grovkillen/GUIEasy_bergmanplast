@@ -42,17 +42,17 @@ guiEasy.tender = function (processID, processType) {
         helpEasy.guiUpdater();
         //Lookup if internet is found
         if (helpEasy.internet() === false) {
-            guiEasy.popper.topNotifier("internetDown","Internet connection is down.", "warning");
+            guiEasy.popper.topNotifier("internetDown","Internet är nere...", "warning");
         } else if ( guiEasy.nodes[helpEasy.getCurrentIndex()].notifierID === "internetDown" ) {
-            guiEasy.popper.topNotifier("internetUp","Internet connection is re-established.", "success", 5);
+            guiEasy.popper.topNotifier("internetUp","Internetuppkoppling åter igång.", "success", 5);
         }
         //is the unit reachable
         if (helpEasy.getCurrentIndex("online") === false && helpEasy.internet() === true) {
-            guiEasy.popper.topNotifier("unitDown","Connection with unit lost.", "warning");
+            guiEasy.popper.topNotifier("unitDown","Serverkontakt nere.", "warning");
         } else if (guiEasy.nodes[helpEasy.getCurrentIndex()].notifierID === "unitDown") {
             guiEasy.nodes[helpEasy.getCurrentIndex()].stats.lastCheck = Date.now();
             helpEasy.setCurrentOnline("online");
-            guiEasy.popper.topNotifier("unitUp","Connection with unit is re-established.", "success", 3);
+            guiEasy.popper.topNotifier("unitUp","Kontakt med servern är åter igång.", "success", 3);
         }
         //is the settings in gui updated?
         //helpEasy.guiUpdaterSettings();

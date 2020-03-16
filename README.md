@@ -444,15 +444,6 @@ You need to have CORS allow cross-domain allowed for the GUI to work running fro
 server. We use [this](https://mybrowseraddon.com/access-control-allow-origin.html) add-on which
 lets you turn it on/off by the click of a button.
 
-## Sponsorship
-
-We are happy for any means of funding you may want to send our way. Please use one of these
-channels:
-
-* [Ko-Fi](https://ko-fi.com/GrovkillenTDer): one time (public)
-* [PayPal](https://www.paypal.me/espeasy): one time (anonymous)
-* [Patreon](https://www.patreon.com/GrovkillenTDer): reoccurring (monthly, extra features, public)
-
 ## Authors
 
 * **Jimmy "Grovkillen" Westberg** - *Initial work* -
@@ -473,51 +464,3 @@ Please refer to [LICENSE.md](LICENSE.md) file for details.
 * Weather information API using [weatherstack](https://weatherstack.com/)
 * Screenshots using [html2canvas](https://html2canvas.hertzen.com/)
 * Inspiration for the terminal look of the Drones come from ``Terminal.css`` found [here](https://terminalcss.xyz/)
-
-## Sponsors
-
-The following awesome fans are sponsoring us via Patreon, at gold level or more, each month.
-
-### Company Level
-
-### BOM Level
-
-💎 Friedrich Bader
-
-### 2x Platinum
-
-👑 CARL E FORSTER
-
-### Platinum
-
-🏆 Bert van den Bergh,
-🏆 Dennis van der Weck,
-🏆 Droscovi,
-🏆 Harald Fauland,
-🏆 Mikael Brusman
-
-### Gold
-
-🥇 Alain,
-🥇 Alex Bik,
-🥇 Andrew Piechocki,
-🥇 Anupam Singh,
-🥇 Armin Krämer,
-🥇 Clinton Lee Taylor,
-🥇 Etienne Bottke,
-🥇 Hightower,
-🥇 IoTPlay,
-🥇 Jan Kazimour,
-🥇 KJ Dijkema,
-🥇 Marcus Lindberg,
-🥇 Markus Kuntz,
-🥇 marzog,
-🥇 Michael Buchholz,
-🥇 Olaf,
-🥇 Reinhold Kainhofer,
-🥇 Rich Schiffli,
-🥇 Stefan Boschert
-
-### ❤ Thank you notes ❤
-
-Thank you from the bottom of our hearts, without your support we wouldn't be able to do this.
