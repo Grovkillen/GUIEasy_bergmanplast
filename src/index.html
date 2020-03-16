@@ -1,0 +1,91 @@
+<!-- GUIEasy  Copyright (C) 2019-2020  Jimmy "Grovkillen" Westberg -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- build:css inline ../build/temp/gui.min.css -->
+    <link rel="stylesheet" href="gui_easy.css">
+    <!-- /build -->
+    <!-- build:js inline ../build/temp/gui.min.js -->
+    <script src="gui_easy_settings.js"></script>
+    <script src="gui_easy_settings_config_table.js"></script>
+    <script src="gui_easy_default_settings.js"></script>
+    <script src="gui_easy_helper.js"></script>
+    <script src="gui_easy_curly.js"></script>
+    <script src="gui_easy_curly_unit.js"></script>
+    <script src="gui_easy_curly_page.js"></script>
+    <script src="gui_easy_curly_icons.js"></script>
+    <script src="gui_easy_scrubber.js"></script>
+    <script src="gui_easy_popper.js"></script>
+    <script src="gui_easy_popper_extra.js"></script>
+    <script src="gui_easy_popper_rules.js"></script>
+    <script src="gui_easy_pitcher.js"></script>
+    <script src="gui_easy_butler.js"></script>
+    <script src="gui_easy_tender.js"></script>
+    <script src="gui_easy_ini.js"></script>
+    <!-- /build -->
+    <title>Intranet</title>
+</head>
+
+<body>
+<div class="view-got-box-shadows"></div>
+<div class="modal is-black" id="modal-container">
+    <div class="spinner-box" id="fallback-loading-animation">
+        <div class="spinner-container">
+            <div class="spinner-object spinner-object-1"></div>
+            <div class="spinner-object spinner-object-2"></div>
+            <div class="spinner-object spinner-object-3"></div>
+            <div class="spinner-object spinner-object-4"></div>
+            <div class="spinner-object spinner-object-5"></div>
+        </div>
+    </div>
+    <div class="loading-screen" id="modal-loading-screen">
+        {{LOGO-BIG}}
+        <br class="got-margin">
+        Bergmanplast
+        {{VERSION-GUI}}
+        <br class="got-margin">
+        <progress id="modal-loading-progress" value="0"></progress>
+        <div class="loading-log" id="modal-loading-log"></div>
+    </div>
+    {{MODAL-MESSAGE}}
+    {{INFO-MESSAGE}}
+</div>
+
+{{NOTIFIER-TOP}}
+{{NAVBAR}}
+{{WAVE}}
+
+<div class="page-contents" id="page-container">
+
+    <div class="container" id="main-container">
+        {{PAGE-MAIN}}
+    </div>
+
+    {{MENU-ACTION}}
+    {{DRAWER-ORDERS}}
+
+    <div class="footer" data-click="menu-about">
+        {{LOGO}}
+        <div class="text-tiny" data-current-index="0">
+            {{VERSION-GUI-TEXT}}
+            <hr>
+            <a href="https://icons8.com/" target="_blank" rel="{{VERSION-GUI-TEXT}}">Icons on courtesy of ICONS8</a>
+            <br>
+            <a href="https://weatherstack.com/" target="_blank" rel="{{VERSION-GUI-TEXT}}">Weather information brought to you by weatherstack.com</a>
+            <br>
+            <a href="https://ipapi.co/" target="_blank" rel="{{VERSION-GUI-TEXT}}">IP location through ipapi.co</a>
+            <br>
+            <a href="https://html2canvas.hertzen.com/" target="_blank" rel="{{VERSION-GUI-TEXT}}">Screenshot using html2canvas</a>
+        </div>
+        {{INFO-FOOTER}}
+    </div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>MQTT</title>
+
+</head>
+
+<body>
+  <script src="js/mqttws31.min.js"></script>
+  
+  <script>
+ 
+	fetch('/data/')
+	  .then((response) => {
+		return response.json();
+	  })
+	  .then((myJson) => {
+		console.log(myJson);
+	  });
+//https://gist.github.com/smoofit/dafa493aec8d41ea057370dbfde3f3fc
+	  // Create a client instance
+		client = new Paho.MQTT.Client("192.168.73.207", 9001, "", "clientId");
+
+		// set callback handlers
+		client.onConnectionLost = onConnectionLost;
+		client.onMessageArrived = onMessageArrived;
+
+		// connect the client
+		client.connect({
+			userName:"JW",
+			password:"q2w3e4r5t6",
+			onSuccess:onConnect
+			});
+
+
+		// called when the client connects
+		function onConnect() {
+		  // Once a connection has been made, make a subscription and send a message.
+		  console.log("onConnect");
+		  client.subscribe("World");
+		  message = new Paho.MQTT.Message("Hello");
+		  message.destinationName = "World";
+		  client.send(message);
+		}
+
+		// called when the client loses its connection
+		function onConnectionLost(responseObject) {
+		  if (responseObject.errorCode !== 0) {
+			console.log("onConnectionLost:"+responseObject.errorMessage);
+		  }
+		}
+
+		// called when a message arrives
+		function onMessageArrived(message) {
+		  console.log("onMessageArrived:"+message.payloadString);
+		}
+</script>
+</body>
+</html>
