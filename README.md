@@ -386,57 +386,31 @@ ready.
 Release candidates are by definition never set to the future major and/or minor level. See this example:
 
 ```
-1.0.0 is already released and we want to create a new version with extra stuff
-1.0.nightly.1 is created and we start adding the stuff
+[grunt bump:major]     1.0.0           is already released and we want to create a new version with extra stuff
+[grunt bump:revision]  1.0.nightly.1   is created and we start adding the stuff
 ...
-1.0.nightly.123 is ready to be tested by a broader user base
-1.0.rc1.124 is created
+[grunt bump:revision]  1.0.nightly.123 is ready to be tested by a broader user base
+[grunt bump:rc]        1.0.rc1.124     is created
 ...
-1.0.rc3.126 is the version that is finally accepted
-1.1.0 is created and released.
+[grunt bump:rc]        1.0.rc3.126     is the version that is finally accepted
+[grunt bump:minor]     1.1.0           is created and released
 ```
 
 Another example
 
 ```
-1.1.0 is already released but we found a bug that cannot wait for next version to be resolved
-1.1.nightly.1 is created and we start fixing the bug
+[grunt bump:minor]     1.1.0           is already released but we found a bug that cannot wait for next version to be resolved
+[grunt bump:revision]  1.1.nightly.1   is created and we start fixing the bug
 ...
-1.1.nightly.5 is ready to be tested by a broader user base
-1.1.rc1.6 is created and after testing accepted
-1.1.7 is created and released.
+[grunt bump:revision]  1.1.nightly.5   is ready to be tested by a broader user base
+[grunt bump:rc]        1.1.rc1.6       is created and after testing accepted
+[grunt bump:revision]  1.1.nightly.7   (since this is the one we want to release as the patched version, so we need to remove the dev. flag)
+[grunt bump:dev=false] 1.1.7           is created and released
 ```
 
 As you can see, ``nightly`` and ``rc`` is **only a state** of the code, the revision is still
 the actual version together with the major and minor number. You may be used to the term
 metadata or tag, anyway, they are not used as actual versions.
-
-## CSS Framework
-
-The entire CSS framework can be used for any other web site or project but currently we haven't
-created a demo site with code examples. This might change in the future if other uses of
-this framework is gaining interest. The same goes for JavaScript components which are currently
-very ESP Easy specific.
-
-## Queen Bee & Drones
-
-By default a unit that have the ``index.htm.gz`` file on-board will act as the "Queen Bee".
-The Queen is hosting the web interface and all other units that is stored in the Queen's node
-list will be referred to as "Drones", units that will only be reached using API. A Queen
-and the following Drones form a "Swarm" of units. This means that by simply browsing to
-a Queen you can jump to all the Drones in that Swarm without the need of loading the html
-code more than once. This makes surfing the Swarm a breeze, for you and the units.
-
-## Dash
-
-We use something we call ``dash``'s to create small widgets which can be either populated
-with data or used for human interaction (buttons, sliders etc.). They can use ``curly`` or
-``html`` syntax and reside in a square element on the custom dashboard.
-
-## Forms
-
-The ``controllers``, ``plugins``, and ``notification`` setup pages are defined by their
-corresponding page. These can, similar to dash's, use either html or curly syntax.
 
 ## CORS error when running as localhost
 
