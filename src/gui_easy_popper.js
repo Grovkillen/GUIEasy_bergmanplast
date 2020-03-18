@@ -5,8 +5,6 @@ guiEasy.popper = function (processID, processType) {
     setInterval(guiEasy.popper.tryCallEvent.counter, 5);
     //add event listeners...
     guiEasy.popper.events();
-    guiEasy.popper.rules();
-    guiEasy.popper.favicon();
     helpEasy.addToLogDOM("pageSize", 1);
     helpEasy.processDone(processID, processType);
 };
@@ -733,7 +731,7 @@ guiEasy.popper.update = async function (whatToDo) {
             //flash the screen, since no internet we cannot use the external data..
             let eventDetails = {
                 "type": "wave",
-                "text": "No internet!",
+                "text": "Inget internet!",
                 "color": "warning"
             };
             guiEasy.popper.tryCallEvent(eventDetails);
@@ -902,24 +900,4 @@ guiEasy.popper.shortcut = function (keyboard) {
         }
     }
     helpEasy.addToLogDOM("key combo: " + keyCombo + " (" + keyboard.state + ")", 2);
-};
-
-guiEasy.popper.favicon = function () {
-    let colors = {
-        "inverted": "#2F4252",
-        "sunny": "#FFD100",
-        "info": "#FF8F12",
-        "warning": "#EF483D",
-        "success": "#00AE41",
-        "font": "#FFFFFF"
-    };
-    let themeSetting = document.getElementById("custom-theme-settings").dataset;
-    if (Object.keys(themeSetting).length > 0) {
-        for (let i = 0; i < Object.keys(themeSetting).length; i++) {
-            let x = Object.keys(themeSetting)[i].toString();
-            let color = x.split(/(?=[A-Z])/).map(s => s.toLowerCase());
-            colors[color[1]] = helpEasy.rgb2hex(themeSetting[x].split("|")[1]);
-        }
-    }
-  helpEasy.favicon(colors);
 };

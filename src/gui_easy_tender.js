@@ -39,7 +39,7 @@ guiEasy.tender = function (processID, processType) {
     }, 10);
     //gui updater
     setInterval(function () {
-        helpEasy.guiUpdater();
+        //helpEasy.guiUpdater();
         //Lookup if internet is found
         if (helpEasy.internet() === false) {
             guiEasy.popper.topNotifier("internetDown","Internet är nere...", "warning");

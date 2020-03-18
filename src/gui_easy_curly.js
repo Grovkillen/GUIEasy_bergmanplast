@@ -209,7 +209,7 @@ guiEasy.curly.menu = function (arg) {
             html += `
                 <button tabindex="-1" class="menu-` + listItems[i].name + ` main-` + listItems[i].color + ` got-tooltip" data-click="` + listItems[i].what + `-` + listItems[i].color + `">
                 {{ICON-` + listItems[i].name.toUpperCase() + `}}
-                    <div class="tooltip"><div class="text">` + helpEasy.capitalWord(listItems[i].name) + `</div></div>
+                    <div class="tooltip"><div class="text">` + listItems[i].name + `</div></div>
                 </button>
             `;
         }
@@ -271,7 +271,7 @@ guiEasy.curly.navbar.tab = function (name) {
             <li class="nav" name="tab-` + name + `">
                 <div class="nav icon text" data-click="tab-` + name + `" data-tab="` + name + `" data-highlight="true">
                     <div class="tab-icon" data-click="tab-` + name + `">{{ICON-` + name.toUpperCase() + `}}</div>
-                    <div class="tab-text" data-click="tab-` + name + `">` + helpEasy.capitalWord(name) + `</div>
+                    <div class="tab-text" data-click="tab-` + name + `">` + name + `</div>
         `;
 };
 

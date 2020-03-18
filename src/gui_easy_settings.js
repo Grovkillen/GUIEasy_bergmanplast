@@ -36,7 +36,7 @@ const guiEasy = {
         }
     },
     'geekName': function () {
-        return guiEasy.name.replace(' ', '-').toLowerCase();
+        return guiEasy.name.replace(/ /g, '-').toLowerCase();
     },
     'geekNameFull': function () {
         return guiEasy.geekName() + '-' + guiEasy.version.full()
@@ -89,12 +89,11 @@ const guiEasy = {
             return 60000        //Once a minute
         },
         'get':[
-            {'endpoint':'jobs',                 'ttl_fallback':2000},
-            {'endpoint':'active',            'ttl_fallback':99999999},       //will not update very often...
-            {'endpoint':'data'},             //Fallback of 29999 will not be part of first boot fetch
+            {'endpoint':'data.json', 'ttl_fallback':2000},
+            {'endpoint':'test.json', 'ttl_fallback':2000}
         ],
         'post':[
-            {'endpoint':'webhook'}
+            //{'endpoint':'webhook'}
         ]
     },
     'fetchingWait': "Hämtning ej klar, var god vänta...",
