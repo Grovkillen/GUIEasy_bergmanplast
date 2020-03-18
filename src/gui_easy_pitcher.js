@@ -39,7 +39,7 @@ guiEasy.pitcher = async function (processID, processType) {
             helpEasy.setCurrentIndex(0);
             guiEasy.current.live = helpEasy.getCurrentIndex();
             //update graphics
-
+            helpEasy.updateGraphics();
             helpEasy.addToLogDOM("pageSize", 1);
         }
     }, timeoutX);
@@ -57,6 +57,7 @@ guiEasy.pitcher = async function (processID, processType) {
         if (guiEasy.current.gui !== undefined) {
             clearInterval(y);
             helpEasy.addToLogDOM("pageSize", 1);
+            helpEasy.processDone(processID, processType);
         }
     }, timeoutY);
     //and we're live and kicking!

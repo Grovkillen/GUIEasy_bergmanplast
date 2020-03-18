@@ -39,3 +39,8 @@ helpEasy.getDataFromNode = function (array, index, endpoint, ttl_fallback) {
         guiEasy.current.live = index;
     }
 };
+
+helpEasy.updateGraphics = function () {
+
+    guiEasy.current.gui = helpEasy.getCurrentIndex();
+};
