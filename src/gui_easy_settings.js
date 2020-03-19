@@ -98,8 +98,8 @@ const guiEasy = {
     },
     'fetchingWait': "Hämtning ej klar, var god vänta...",
     'tabs': {
-        'left': ['start', 'planering', 'körning', 'historik'],
-        'right': ['info', 'kvalitét', 'tools', 'rules']
+        'left': ['start', 'planering', 'körning'],
+        'right': ['historik', 'info', 'kvalitét']
     },
     'guiStats': {           //Not to be mistaken for the unit's stats, this is the queen bee gui buildup stats
         'pageSize': 0,      //the other is how the unit themselves are doing fetch-wise
