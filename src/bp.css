@@ -1,0 +1,15 @@
+:root {
+    --main-bg-color: 255, 255, 255;
+    --main-inverted-color: 147, 166, 182;
+    --main-sunny-color: 255, 209, 0;
+    --main-info-color: 255, 143, 18;
+    --main-warning-color: 239, 72, 61;
+    --main-success-color: 0, 174, 65;
+    --main-font-color: 4, 82, 146;
+}
+div.modal.is-black {
+    background-color: rgba(255,255,255,1);
+}
+.logo-big {
+    width: calc(7 * var(--default-height-size, 20));
+}

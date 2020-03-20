@@ -69,7 +69,7 @@ module.exports = function(grunt) {
           },
           target: {
               files: {
-                  'build/temp/gui.min.css': ['src/gui_easy.css'],
+                  'build/temp/gui.min.css': ['src/gui_easy.css', 'src/bp.css'],
                   'build/temp/mini.min.css': ['src/index-minimal.css']
               }
           }
