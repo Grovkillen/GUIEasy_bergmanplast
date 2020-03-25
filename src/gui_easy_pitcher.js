@@ -56,6 +56,8 @@ guiEasy.pitcher = async function (processID, processType) {
         }
         if (guiEasy.current.gui !== undefined) {
             clearInterval(y);
+            //TODO: should this be here?
+            guiEasy.popper.tryCallEvent({"type":"tab","args":["tab","start"]});
             helpEasy.addToLogDOM("pageSize", 1);
             helpEasy.processDone(processID, processType);
         }

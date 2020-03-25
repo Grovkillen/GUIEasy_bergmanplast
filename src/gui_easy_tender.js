@@ -54,10 +54,6 @@ guiEasy.tender = function (processID, processType) {
             helpEasy.setCurrentOnline("online");
             guiEasy.popper.topNotifier("unitUp","Kontakt med servern är åter igång.", "success", 3);
         }
-        //is the settings in gui updated?
-        //helpEasy.guiUpdaterSettings();
-        //console.log(defaultSettings);
-        //console.log(guiEasy.nodes);
     }, guiEasy.fetchSettings.intervalGUIupdater);
 
     helpEasy.processDone(processID, processType);

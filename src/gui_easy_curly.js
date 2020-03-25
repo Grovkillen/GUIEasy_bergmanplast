@@ -271,7 +271,7 @@ guiEasy.curly.navbar.tab = function (name) {
             <li class="nav" name="tab-` + name + `">
                 <div class="nav icon text" data-click="tab-` + name + `" data-tab="` + name + `" data-highlight="true">
                     <div class="tab-icon" data-click="tab-` + name + `">{{ICON-` + name.toUpperCase() + `}}</div>
-                    <div class="tab-text" data-click="tab-` + name + `">` + name + `</div>
+                    <div class="tab-text" data-click="tab-` + name + `">` + name.charAt(0).toUpperCase() + name.slice(1) + `</div>
         `;
 };
 
