@@ -175,7 +175,7 @@ guiEasy.curly.button = function (arg) {
         html += "<button class='is-hidden main-success' id='modal-button-ok'>Ok</button>";
     }
     if (type === "cancel" || type === "all") {
-        html += "<button class='is-hidden main-info' id='modal-button-cancel'>Avbryt</button>";
+        html += "<button class='is-hidden main-info' id='modal-button-cancel'>Cancel</button>";
     }
     if (type === "rescan" || type === "all") {
         html += "<button class='is-hidden' id='modal-button-rescan'>Rescan</button>";
@@ -209,7 +209,7 @@ guiEasy.curly.menu = function (arg) {
             html += `
                 <button tabindex="-1" class="menu-` + listItems[i].name + ` main-` + listItems[i].color + ` got-tooltip" data-click="` + listItems[i].what + `-` + listItems[i].color + `">
                 {{ICON-` + listItems[i].name.toUpperCase() + `}}
-                    <div class="tooltip"><div class="text">` + listItems[i].name + `</div></div>
+                    <div class="tooltip"><div class="text">` + helpEasy.capitalWord(listItems[i].name) + `</div></div>
                 </button>
             `;
         }
@@ -241,7 +241,7 @@ guiEasy.curly.notifier = function (arg) {
 
 guiEasy.curly.navbar = function () {
     const tabs = guiEasy.tabs;
-    const middle = "{{MIDDLE-INFO}}";
+    const middle = "{{UNITNAME}}";
     let html = `
             <nav id="navbar">
                 <div class="got-wallpaper"></div>
@@ -271,7 +271,7 @@ guiEasy.curly.navbar.tab = function (name) {
             <li class="nav" name="tab-` + name + `">
                 <div class="nav icon text" data-click="tab-` + name + `" data-tab="` + name + `" data-highlight="true">
                     <div class="tab-icon" data-click="tab-` + name + `">{{ICON-` + name.toUpperCase() + `}}</div>
-                    <div class="tab-text" data-click="tab-` + name + `">` + name.charAt(0).toUpperCase() + name.slice(1) + `</div>
+                    <div class="tab-text" data-click="tab-` + name + `">` + helpEasy.capitalWord(name) + `</div>
         `;
 };
 
@@ -321,4 +321,13 @@ guiEasy.curly.info = function (what) {
     if (what[0] === "footer") {
         helpEasy.addToLogDOM("footer", 0, "info");
     }
+    if (what[0] === "patreon") {
+        helpEasy.addToLogDOM("patreon", 0, "info");
+    }
+};
+
+guiEasy.curly.gamepad = function () {
+    let html = "<div id='template-gamepad'>{{ICON-GAMEPAD}}</div>";
+    html += "<div id='active-gamepads' class='gamepads'></div>";
+    return html;
 };
