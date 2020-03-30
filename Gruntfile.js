@@ -15,34 +15,18 @@ module.exports = function(grunt) {
                   'build/temp/gui.min.js': [
                       // THESE MUST BE IN CORRECT ORDER.... ADD NEW FILES HERE
                       'src/gui_easy_settings.js',
-                      'src/gui_easy_settings_config_table.js',
-                      'src/gui_easy_default_settings.js',
                       'src/gui_easy_helper.js',
+                      'src/gui_easy_helper_server_specific.js',
                       'src/gui_easy_curly.js',
-                      'src/gui_easy_curly_unit.js',
                       'src/gui_easy_curly_page.js',
                       'src/gui_easy_curly_icons.js',
                       'src/gui_easy_scrubber.js',
                       'src/gui_easy_popper.js',
-                      'src/gui_easy_popper_rules.js',
-                      'src/gui_easy_popper_extra.js',
+                      'src/gui_easy_popper_sign.js',
                       'src/gui_easy_pitcher.js',
                       'src/gui_easy_butler.js',
                       'src/gui_easy_tender.js',
                       'src/gui_easy_ini.js',
-                  ],
-                  'build/temp/forms.min.js': [
-                      'src/forms/gui_easy_forms.js',
-                      'src/forms/gui_easy_forms_p*.js',
-                      'src/forms/gui_easy_forms_c*.js',
-                      'src/forms/gui_easy_forms_n*.js'
-                  ],
-                  'build/temp/dash.min.js': [
-                      'src/dash/gui_easy_dash.js',
-                      'src/dash/gui_easy_dash_d*.js'
-                  ],
-                  'build/temp/mini.min.js': [
-                      'src/index-minimal.js'
                   ]
               }
           }
@@ -55,9 +39,7 @@ module.exports = function(grunt) {
                   collapseWhitespace: true
               },
               files: {
-                  'build/temp/index.min.html': 'build/temp/index.min.html',
-                  'build/temp/no-dash.index.min.html': 'build/temp/no-dash.index.min.html',
-                  'build/temp/mini.index.min.html': 'build/temp/mini.index.min.html'
+                  'build/temp/index.min.html': 'build/temp/index.min.html'
               }
           },
       },
@@ -78,12 +60,6 @@ module.exports = function(grunt) {
       processhtml: {
                 main: {
                     files: {'build/temp/index.min.html': ['src/index.html']}
-                },
-                noDash: {
-                  files: {'build/temp/no-dash.index.min.html': ['src/no-dash.index.html']}
-                },
-                mini: {
-                  files: {'build/temp/mini.index.min.html': ['src/index-minimal.html']}
                 }
             },
 // clean the release folder + nodash
@@ -132,28 +108,6 @@ module.exports = function(grunt) {
                   src: ['build/temp/index.min.html'],
                   dest: 'build/temp/main/index.htm.gz'
               }]
-          },
-          noDash: {
-              options: {
-                  mode: 'gzip',
-                  level: 9 //default is 1, max is 9
-              },
-              files: [{
-                  expand: false,
-                  src: ['build/temp/no-dash.index.min.html'],
-                  dest: 'build/temp/noDash/index.htm.gz'
-              }]
-          },
-          mini: {
-              options: {
-                  mode: 'gzip',
-                  level: 9
-              },
-              files: [{
-                  expand: false,
-                  src: ['build/temp/mini.index.min.html'],
-                  dest: 'build/temp/mini/index.htm.gz'
-              }]
           }
       },
 // copyright
@@ -169,24 +123,8 @@ module.exports = function(grunt) {
                       input: 'build/temp/gui.min.css'
                   },
                   {
-                      prepend: '/* GUIEasy  Copyright (C) 2019-' + new Date().getFullYear() + '  Jimmy "Grovkillen" Westberg */',
-                      input: 'build/temp/forms.min.js'
-                  },
-                  {
-                      prepend: '/* GUIEasy  Copyright (C) 2019-' + new Date().getFullYear() + '  Jimmy "Grovkillen" Westberg */',
-                      input: 'build/temp/dash.min.js'
-                  },
-                  {
                       prepend: '<!-- GUIEasy  Copyright (C) 2019-' + new Date().getFullYear() + '  Jimmy "Grovkillen" Westberg  -->',
                       input: 'build/temp/index.min.html'
-                  },
-                  {
-                      prepend: '<!-- GUIEasy  Copyright (C) 2019-' + new Date().getFullYear() + '  Jimmy "Grovkillen" Westberg  -->',
-                      input: 'build/temp/no-dash.index.min.html'
-                  },
-                  {
-                      prepend: '<!-- GUIEasy  Copyright (C) 2019-' + new Date().getFullYear() + '  Jimmy "Grovkillen" Westberg  -->',
-                      input: 'build/temp/mini.index.min.html'
                   }
               ]
           }
@@ -245,7 +183,7 @@ module.exports = function(grunt) {
                   {
                       expand: true,
                       cwd: 'build/temp',
-                      src: ['main/*.gz', 'noDash/*.gz', 'mini/*.gz']
+                      src: ['main/*.gz']
                   }
               ],
               options: {
@@ -315,10 +253,6 @@ module.exports = function(grunt) {
           version = guiEasy.major + '.' + guiEasy.minor + '.' + guiEasy.revision;
         }
         let semVer = guiEasy.major + '.' + guiEasy.minor + '.' + guiEasy.revision;
-        // create a file with no dash (to save space)
-        let noDashDoc = grunt.file.read('src/index.html');
-        noDashDoc = noDashDoc.replace(/<!-- build:js inline ..\/build\/temp\/dash.min.js -->([\s\S]*?)<!-- \/build -->/, "");
-        grunt.file.write('src/no-dash.index.html', noDashDoc);
         // update the package.json
         let packageJSON = grunt.file.read('package.json');
         packageJSON = JSON.parse(packageJSON);
@@ -349,7 +283,6 @@ module.exports = function(grunt) {
                 'file_append',
                 'compress',
                 'clean:tempFiles',
-                'clean:noDash',
                 'folder_list',
                 'filesize',
                 'size_report',
@@ -378,7 +311,6 @@ module.exports = function(grunt) {
                 'file_append',
                 'compress',
                 'clean:tempFiles',
-                'clean:noDash',
                 'copy',
                 'rename:test',
                 'minimalVersionInjection',

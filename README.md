@@ -410,7 +410,7 @@ Another example
 [grunt bump:dev=false] 1.1.7           is created and released
 ```
 
-As you can see, ``nightly`` and ``rc`` is **only a state** of the code, the revision is still
+As you can see, ``nightly`` and ``rc`` are **only states** of the code, the revision is still
 the actual version together with the major and minor number. You may be used to the term
 metadata or tag, anyway, they are not used as actual versions.
 
