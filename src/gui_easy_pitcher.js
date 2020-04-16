@@ -8,7 +8,7 @@ guiEasy.pitcher = async function (processID, processType) {
     if (window.location.hostname === "localhost") {
         let path = window.location.origin;
         if (window.location.pathname === "/") {
-            path += "/custom.json";
+            path += "/src/custom.json";
         } else {
             path += window.location.pathname;
             path = path.replace("index.html", "custom.json");

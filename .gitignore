@@ -10,5 +10,5 @@ package-lock.json
 
 # private ***********
 src/custom.json
-src/data
 build/0.0.0.0.0
+data/
