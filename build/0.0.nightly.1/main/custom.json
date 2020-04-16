@@ -1,0 +1,4 @@
+{
+    "ip":"'localhost:' + window.location.port + '/data'",
+    "type":"server"
+}

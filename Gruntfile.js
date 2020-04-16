@@ -15,6 +15,7 @@ module.exports = function(grunt) {
                   'build/temp/gui.min.js': [
                       // THESE MUST BE IN CORRECT ORDER.... ADD NEW FILES HERE
                       'src/gui_easy_settings.js',
+                      'src/gui_easy_default_settings.js',
                       'src/gui_easy_helper.js',
                       'src/gui_easy_helper_server_specific.js',
                       'src/gui_easy_curly.js',
@@ -51,8 +52,7 @@ module.exports = function(grunt) {
           },
           target: {
               files: {
-                  'build/temp/gui.min.css': ['src/gui_easy.css', 'src/bp.css'],
-                  'build/temp/mini.min.css': ['src/index-minimal.css']
+                  'build/temp/gui.min.css': ['src/gui_easy.css', 'src/bp.css']
               }
           }
       },
@@ -275,7 +275,6 @@ module.exports = function(grunt) {
                 'verifyCopyright',
                 'clean:temp',
                 'clean:version',
-                'minimalVersionInjection:' + version,
                 'uglify',
                 'cssmin',
                 'processhtml',
@@ -287,10 +286,9 @@ module.exports = function(grunt) {
                 'filesize',
                 'size_report',
                 'copy',
-                'rename',
                 'clean:releaseInfo',
+                'rename',
                 'listBuilds',
-                'minimalVersionInjection',
                 'releaseFileSizes',
                 'gruntDone:' + version
             );
@@ -303,7 +301,6 @@ module.exports = function(grunt) {
                 'verifyCopyright',
                 'clean:temp',
                 'clean:test',
-                'minimalVersionInjection:' + version + '-test-' + timestamp,
                 'uglify',
                 'cssmin',
                 'processhtml',
@@ -313,7 +310,6 @@ module.exports = function(grunt) {
                 'clean:tempFiles',
                 'copy',
                 'rename:test',
-                'minimalVersionInjection',
                 'testBuild',
                 'gruntDone:' + version + "-test-" + timestamp
             );
@@ -335,18 +331,6 @@ module.exports = function(grunt) {
             settings = settings.replace(/'test': \d*,/, "'test': null,");
         }
         grunt.file.write( 'src/gui_easy_settings.js', settings);
-    });
-
-    grunt.registerTask('minimalVersionInjection', function (version) {
-        let data = grunt.file.read('src/index-minimal.js');
-        if (version !== undefined) {
-            grunt.log.ok('adding temporary mini version');
-            data = data.replace(/"v": "" \/\/FRONTEND/, '"v": "' + version + '" //FRONTEND');
-        } else {
-            grunt.log.ok('removing temporary mini version');
-            data = data.replace(/(?<="v": ).*(?= \/\/FRONTEND)/, '""');
-        }
-        grunt.file.write( 'src/index-minimal.js', data);
     });
 
     grunt.registerTask('verifyCopyright', function () {

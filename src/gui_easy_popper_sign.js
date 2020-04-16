@@ -1,24 +1,25 @@
+/* GUIEasy  Copyright (C) 2019-2020  Jimmy "Grovkillen" Westberg */
 
 
 //https://stackoverflow.com/questions/2368784/draw-on-html5-canvas-using-a-mouse
 
 guiEasy.popper.signature = function () {
 
-    var canvas, ctx, flag = false,
+    let canvas, ctx, flag = false,
         prevX = 0,
         currX = 0,
         prevY = 0,
         currY = 0,
         dot_flag = false;
 
-    var x = "black",
+    let x = "black",
         y = 2;
 
     function init() {
         canvas = document.getElementById('can');
         ctx = canvas.getContext("2d");
-        w = canvas.width;
-        h = canvas.height;
+        let w = canvas.width;
+        let h = canvas.height;
 
         canvas.addEventListener("mousemove", function (e) {
             findxy('move', e)
@@ -68,7 +69,7 @@ guiEasy.popper.signature = function () {
         ctx.moveTo(prevX, prevY);
         ctx.lineTo(currX, currY);
         ctx.strokeStyle = x;
-        ctx.lineWidth = y;
+        ctx.lineWidth = y + "px";
         ctx.stroke();
         ctx.closePath();
     }
@@ -89,7 +90,7 @@ guiEasy.popper.signature = function () {
     }
 
     function findxy(res, e) {
-        if (res == 'down') {
+        if (res === 'down') {
             prevX = currX;
             prevY = currY;
             currX = e.clientX - canvas.offsetLeft;
@@ -105,10 +106,10 @@ guiEasy.popper.signature = function () {
                 dot_flag = false;
             }
         }
-        if (res == 'up' || res == "out") {
+        if (res === 'up' || res === "out") {
             flag = false;
         }
-        if (res == 'move') {
+        if (res === 'move') {
             if (flag) {
                 prevX = currX;
                 prevY = currY;
