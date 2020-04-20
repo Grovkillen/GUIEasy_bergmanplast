@@ -89,8 +89,8 @@ const guiEasy = {
             return 60000        //Once a minute
         },
         'get':[
-            {'endpoint':'data.json', 'ttl_fallback':2000},
-            {'endpoint':'test.json', 'ttl_fallback':2000}
+            {'endpoint':'jobb.ini', 'ttl_fallback':2000},
+            {'endpoint':'maskiner.ini', 'ttl_fallback':9999999999}
         ],
         'post':[
             //{'endpoint':'webhook'}

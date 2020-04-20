@@ -1,0 +1,7 @@
+timestamp:1587036550499
+major:0
+minor:0
+revision:2
+rc:0
+dev:true
+files:[{"build":"main","size":47525}]

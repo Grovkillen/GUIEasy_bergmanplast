@@ -290,26 +290,10 @@ guiEasy.curly.drawer = function (arg) {
                         Ordrar
                         </div>
                         <div class="bottom-container">
-                        <div class="area">
+                            <div class="area" id="unplanned-jobs">
+                            </div>
+                        </div>
                      `;
-        let rowCount = 0;
-        html += '<div class="column">';
-        for (let i = 0; i < x.length; i++) {
-            rowCount++;
-            if (rowCount === columnRowsMax) {
-                html += '</div><div class="column">';
-                rowCount = 1;
-            }
-            //html += guiEasy.curly.drawer.theme(x[i]);
-        }
-        html +=  `
-            <hr>
-            <div class="row">
-                    
-            </div>
-            </div>
-            `;
-        html += "</div></div></div>";
     }
     return html;
 };
