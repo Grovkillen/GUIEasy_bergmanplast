@@ -7,6 +7,7 @@
     --main-warning-color: 239, 72, 61;
     --main-success-color: 0, 174, 65;
     --main-font-color: 4, 82, 146;
+    --day-width: 200px;
 }
 div.modal.is-black {
     background-color: rgba(255,255,255,1);
@@ -38,20 +39,25 @@ canvas#digital-twin {
     background-color: greenyellow;
 }
 .machine {
-    text-align: left;
-    color: white;
     border-radius: 5px;
     background-color: rgb(var(--main-inverted-color));
     margin-top: 10px;
     margin-bottom: 10px;
+}
+.machine > .name {
+    text-align: left;
+    color: rgb(var(--main-font-color));
     padding: 5px;
 }
 .machine > .planner {
+
+    overflow: hidden;
+    margin-bottom: 5px;
     background-color: rgb(var(--main-inverted-color));
     background-image:
             linear-gradient(90deg,
-            rgba(255, 255, 255, 0.5) 0,
-            rgba(255, 255, 255, 0.5) 1%,
+            rgba(var(--main-font-color), 0.9) 0,
+            rgba(var(--main-font-color), 0.9) 1%,
             transparent 1%
             ),
             linear-gradient(180deg,
@@ -60,8 +66,8 @@ canvas#digital-twin {
             ),
             linear-gradient(90deg,
             transparent 50%,
-            rgba(255, 255, 255, 0.5) 50%,
-            rgba(255, 255, 255, 0.5) 51%,
+            rgba(var(--main-font-color), 0.9) 50%,
+            rgba(var(--main-font-color), 0.9) 51%,
             transparent 51%
             ),
             linear-gradient(180deg,
@@ -69,117 +75,149 @@ canvas#digital-twin {
             transparent 70%
             ),
             linear-gradient(90deg,
-            transparent 4.25%,
-            rgba(255, 255, 255, 0.4) 4.25%,
-            rgba(255, 255, 255, 0.4) 5.25%,
-            transparent 5.25%,
-
-            transparent 8.5%,
-            rgba(255, 255, 255, 0.4) 8.5%,
-            rgba(255, 255, 255, 0.4) 9.5%,
-            transparent 9.5%,
-
-            transparent 12.5%,
-            rgba(255, 255, 255, 0.4) 12.5%,
-            rgba(255, 255, 255, 0.4) 13.5%,
-            transparent 13.5%,
-
-            transparent 16.5%,
-            rgba(255, 255, 255, 0.4) 16.5%,
-            rgba(255, 255, 255, 0.4) 17.5%,
-            transparent 17.5%,
-
-            transparent 20.75%,
-            rgba(255, 255, 255, 0.4) 20.75%,
-            rgba(255, 255, 255, 0.4) 21.75%,
-            transparent 21.75%,
-
+            transparent 4%,
+            rgba(var(--main-font-color), 0.9) 4%,
+            rgba(var(--main-font-color), 0.9) 5%,
+            transparent 5%
+            ),
+            linear-gradient(90deg,
+            transparent 8%,
+            rgba(var(--main-font-color), 0.9) 8%,
+            rgba(var(--main-font-color), 0.9) 9%,
+            transparent 9%
+            ),
+            linear-gradient(90deg,
+            transparent 12%,
+            rgba(var(--main-font-color), 0.9) 12%,
+            rgba(var(--main-font-color), 0.9) 13%,
+            transparent 13%
+            ),
+            linear-gradient(90deg,
+            transparent 16%,
+            rgba(var(--main-font-color), 0.9) 16%,
+            rgba(var(--main-font-color), 0.9) 17%,
+            transparent 17%
+            ),
+            linear-gradient(90deg,
+            transparent 20%,
+            rgba(var(--main-font-color), 0.9) 20%,
+            rgba(var(--main-font-color), 0.9) 21%,
+            transparent 21%
+            ),
+            linear-gradient(90deg,
             transparent 25%,
-            rgba(255, 255, 255, 0.4) 25%,
-            rgba(255, 255, 255, 0.4) 26%,
-            transparent 26%,
-
+            rgba(var(--main-font-color), 0.9) 25%,
+            rgba(var(--main-font-color), 0.9) 26%,
+            transparent 26%
+            ),
+            linear-gradient(90deg,
             transparent 29%,
-            rgba(255, 255, 255, 0.4) 29%,
-            rgba(255, 255, 255, 0.4) 30%,
-            transparent 30%,
-
-            transparent 33.25%,
-            rgba(255, 255, 255, 0.4) 33.25%,
-            rgba(255, 255, 255, 0.4) 34.25%,
-            transparent 34.25%,
-
-            transparent 37.5%,
-            rgba(255, 255, 255, 0.4) 37.5%,
-            rgba(255, 255, 255, 0.4) 38.5%,
-            transparent 38.5%,
-
-            transparent 41.5%,
-            rgba(255, 255, 255, 0.4) 41.5%,
-            rgba(255, 255, 255, 0.4) 42.5%,
-            transparent 42.5%,
-
+            rgba(var(--main-font-color), 0.9) 29%,
+            rgba(var(--main-font-color), 0.9) 30%,
+            transparent 30%
+            ),
+            linear-gradient(90deg,
+            transparent 33%,
+            rgba(var(--main-font-color), 0.9) 33%,
+            rgba(var(--main-font-color), 0.9) 34%,
+            transparent 34%
+            ),
+            linear-gradient(90deg,
+            transparent 37%,
+            rgba(var(--main-font-color), 0.9) 37%,
+            rgba(var(--main-font-color), 0.9) 38%,
+            transparent 38%
+            ),
+            linear-gradient(90deg,
+            transparent 41%,
+            rgba(var(--main-font-color), 0.9) 41%,
+            rgba(var(--main-font-color), 0.9) 42%,
+            transparent 42%
+            ),
+            linear-gradient(90deg,
             transparent 46%,
-            rgba(255, 255, 255, 0.4) 46%,
-            rgba(255, 255, 255, 0.4) 47%,
-            transparent 47%,
-
-            transparent 54.25%,
-            rgba(255, 255, 255, 0.4) 54.25%,
-            rgba(255, 255, 255, 0.4) 55.25%,
-            transparent 55.25%,
-
-            transparent 58.25%,
-            rgba(255, 255, 255, 0.4) 58.25%,
-            rgba(255, 255, 255, 0.4) 59.25%,
-            transparent 59.25%,
-
-            transparent 62.5%,
-            rgba(255, 255, 255, 0.4) 62.5%,
-            rgba(255, 255, 255, 0.4) 63.5%,
-            transparent 63.5%,
-
-            transparent 66.5%,
-            rgba(255, 255, 255, 0.4) 66.5%,
-            rgba(255, 255, 255, 0.4) 67.5%,
-            transparent 67.5%,
-
-            transparent 70.75%,
-            rgba(255, 255, 255, 0.4) 70.75%,
-            rgba(255, 255, 255, 0.4) 71.75%,
-            transparent 71.75%,
-
+            rgba(var(--main-font-color), 0.9) 46%,
+            rgba(var(--main-font-color), 0.9) 47%,
+            transparent 47%
+            ),
+            linear-gradient(90deg,
+            transparent 54%,
+            rgba(var(--main-font-color), 0.9) 54%,
+            rgba(var(--main-font-color), 0.9) 55%,
+            transparent 55%
+            ),
+            linear-gradient(90deg,
+            transparent 58%,
+            rgba(var(--main-font-color), 0.9) 58%,
+            rgba(var(--main-font-color), 0.9) 59%,
+            transparent 59%
+            ),
+            linear-gradient(90deg,
+            transparent 62%,
+            rgba(var(--main-font-color), 0.9) 62%,
+            rgba(var(--main-font-color), 0.9) 63%,
+            transparent 63%
+            ),
+            linear-gradient(90deg,
+            transparent 66%,
+            rgba(var(--main-font-color), 0.9) 66%,
+            rgba(var(--main-font-color), 0.9) 67%,
+            transparent 67%
+            ),
+            linear-gradient(90deg,
+            transparent 70%,
+            rgba(var(--main-font-color), 0.9) 70%,
+            rgba(var(--main-font-color), 0.9) 71%,
+            transparent 71%
+            ),
+            linear-gradient(90deg,
             transparent 75%,
-            rgba(255, 255, 255, 0.4) 75%,
-            rgba(255, 255, 255, 0.4) 76%,
-            transparent 76%,
-
-            transparent 79.25%,
-            rgba(255, 255, 255, 0.4) 79.25%,
-            rgba(255, 255, 255, 0.4) 80.25%,
-            transparent 80.25%,
-
-            transparent 83.25%,
-            rgba(255, 255, 255, 0.4) 83.25%,
-            rgba(255, 255, 255, 0.4) 84.25%,
-            transparent 84.25%,
-
-            transparent 87.5%,
-            rgba(255, 255, 255, 0.4) 87.5%,
-            rgba(255, 255, 255, 0.4) 88.5%,
-            transparent 88.5%,
-
-            transparent 91.75%,
-            rgba(255, 255, 255, 0.4) 91.75%,
-            rgba(255, 255, 255, 0.4) 92.75%,
-            transparent 92.75%,
-
-            transparent 95.75%,
-            rgba(255, 255, 255, 0.4) 95.75%,
-            rgba(255, 255, 255, 0.4) 96.75%,
-            transparent 96.75%
+            rgba(var(--main-font-color), 0.9) 75%,
+            rgba(var(--main-font-color), 0.9) 76%,
+            transparent 76%
+            ),
+            linear-gradient(90deg,
+            transparent 79%,
+            rgba(var(--main-font-color), 0.9) 79%,
+            rgba(var(--main-font-color), 0.9) 80%,
+            transparent 80%
+            ),
+            linear-gradient(90deg,
+            transparent 83%,
+            rgba(var(--main-font-color), 0.9) 83%,
+            rgba(var(--main-font-color), 0.9) 84%,
+            transparent 84%
+            ),
+            linear-gradient(90deg,
+            transparent 87%,
+            rgba(var(--main-font-color), 0.9) 87%,
+            rgba(var(--main-font-color), 0.9) 88%,
+            transparent 88%
+            ),
+            linear-gradient(90deg,
+            transparent 91%,
+            rgba(var(--main-font-color), 0.9) 91%,
+            rgba(var(--main-font-color), 0.9) 92%,
+            transparent 92%
+            ),
+            linear-gradient(90deg,
+            transparent 96%,
+            rgba(var(--main-font-color), 0.9) 96%,
+            rgba(var(--main-font-color), 0.9) 97%,
+            transparent 97%
             );
-    background-size: 350px calc(4 * var(--default-height-size, 20));
+    background-size: var(--day-width) calc(4 * var(--default-height-size, 20));
     background-repeat: repeat-x;
     min-height: calc(4 * var(--default-height-size, 20));
+}
+.planner > label {
+    display: table-cell;
+    border: unset;
+    font-size: calc(0.75 * var(--default-font-size));
+    width: var(--day-width);
+    min-width: var(--day-width);
+    max-width: var(--day-width);
+    position: relative;
+    top: calc(3.12 * var(--default-height-size, 20));
+    background-color: rgb(var(--main-inverted-color));
 }

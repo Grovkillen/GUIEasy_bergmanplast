@@ -111,7 +111,7 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                 element.id = machine.id;
                 element.innerHTML = `
                                     <div class="name" id="machine-place-` + machine.id + `">`  + machine.namn + ": " + machine.namn + `</div>
-                                    <div class="planner" id="planner-` + machine.id + `"></div>
+                                    <div class="planner" id="planner-` + machine.id + `"> ` + helpEasy.generateLabelsOfDates() + `</div>
                                 `;
                 element.className = "machine";
                 element.setAttribute("ondrop", "helpEasy.drop(event)");
@@ -121,6 +121,26 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
         }
     }
 };
+
+helpEasy.generateLabelsOfDates = function() {
+    let d = new Date();
+    let html = "";
+    for (let i = 0; i < 91; i++) {
+        let date = new Date(d.getTime() + 86400000 * i);
+        let month = '' + (date.getMonth() + 1);
+        let day = '' + date.getDate();
+        let year = date.getFullYear();
+        if (month.length < 2) {
+            month = '0' + month;
+        }
+        if (day.length < 2) {
+            day = '0' + day;
+        }
+        html += "<label>" + [year, month, day].join('-') + "</label>";
+    }
+
+    return html;
+}
 
 helpEasy.allowDrop = function(event) {
     event.preventDefault();
