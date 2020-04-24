@@ -9,10 +9,11 @@ helpEasy.getDataFromNode = function (array, index, endpoint, ttl_fallback) {
         .then(res => res.text())
         .then((dataFromFile) => {
             array[index]["live"][endpoint] = {};
-            array[index]["live"][endpoint].raw= dataFromFile;
+            array[index]["live"][endpoint].raw = dataFromFile;
                 array[index]["live"][endpoint].timestamp = Date.now();
-                if (dataFromFile.TTL !== undefined) {
-                    //array[index]["live"][endpoint].TTL = dataFromFile.TTL;
+                let iniData = helpEasy.iniFileToObject(dataFromFile);
+                if (iniData.info.TTL !== undefined) {
+                    array[index]["live"][endpoint].TTL = iniData.info.TTL;
                 } else {
                     array[index]["live"][endpoint].TTL = ttl_fallback;
                 }
@@ -56,31 +57,46 @@ helpEasy.updateGraphics["jobb.ini"] = function (object) {
         let jobs = object["ej planerade"]["jobb"];
         jobs.map(job => {
             let element = document.getElementById(job);
-            fetch("/data/jobb/" + job + "/jobb.ini")
+            if (helpEasy.findInArray(job, guiEasy.tender.ids) > -1) {    //filter away possible duplicates since we map the array we might get duplicates...
+                fetch("/data/jobb/" + job + "/jobb.ini?callback=" + Date.now())
                     .then(res => res.text())
                     .then((dataFromFile) => {
                         let jobData = helpEasy.iniFileToObject(dataFromFile);
+                            //we should update the existing element if needed
                             if (typeof(element) !== "undefined" && element !== null) {
-                                //we should update the existing element if needed
-                                element.innerText = job +  " " + jobData.info.beskrivning + " " + jobData.jobb.antal + jobData.jobb.enhet;
-
-                            } else {
+                                document.getElementById("job-" + job).innerText = job;
+                                document.getElementById("job-beskrivning-" + job).innerText = jobData.info.beskrivning;
+                                document.getElementById("job-antal-" + job).innerText = jobData.jobb.antal + " " + jobData.jobb.enhet;
+                            }
+                        }
+                    );
+            } else {
+                guiEasy.tender.ids.push(job);
+                fetch("/data/jobb/" + job + "/jobb.ini?callback=" + Date.now())
+                    .then(res => res.text())
+                    .then((dataFromFile) => {
+                            let jobData = helpEasy.iniFileToObject(dataFromFile);
                                 //no element exist, create it
                                 element = document.createElement("div");
                                 element.id = job;
-                                element.innerText = job +  " " + jobData.info.beskrivning + " " + jobData.jobb.antal + jobData.jobb.enhet;
+                                element.innerHTML = `
+                                    <div class="job" id="job-` + job + `">` + job + `</div>
+                                    <div class="beskrivning" id="job-beskrivning-` + job + `">` + jobData.info.beskrivning + `</div>
+                                    <div class="antal" id="job-antal-` + job + `">` + jobData.jobb.antal + ` ` + jobData.jobb.enhet + `</div>
+                                `;
+                                element.dataset.length = "100";
                                 element.className = "post-it";
                                 element.draggable = true;
                                 element.setAttribute("ondragstart", "helpEasy.drag(event)");
                                 jobContainer.appendChild(element);
                             }
-                        }
-                    );
+                        );
+            }
         })
     }
 };
 
-helpEasy.updateGraphics["maskiner.ini"] = function (object) {
+helpEasy.updateGraphics["maskin.ini"] = function (object) {
     if (object["info"]["antal maskiner"] > 0) {
         let machineContainer = document.getElementById("planering-container");
         for (let i = 1; i < (object["info"]["antal maskiner"] + 1); i++) {
@@ -93,7 +109,10 @@ helpEasy.updateGraphics["maskiner.ini"] = function (object) {
                 //no element exist, create it
                 element = document.createElement("div");
                 element.id = machine.id;
-                element.innerText = machine.namn;
+                element.innerHTML = `
+                                    <div class="name" id="machine-place-` + machine.id + `">`  + machine.namn + ": " + machine.namn + `</div>
+                                    <div class="planner" id="planner-` + machine.id + `"></div>
+                                `;
                 element.className = "machine";
                 element.setAttribute("ondrop", "helpEasy.drop(event)");
                 element.setAttribute("ondragover", "helpEasy.allowDrop(event)");
@@ -108,8 +127,8 @@ helpEasy.allowDrop = function(event) {
 };
 
 helpEasy.drop = function(event) {
-    let data = event.dataTransfer.getData("text");
-    event.target.appendChild(document.getElementById(data));
+    let id = event.dataTransfer.getData("text");
+    event.target.appendChild(document.getElementById(id));
 };
 
 helpEasy.drag = function(event) {

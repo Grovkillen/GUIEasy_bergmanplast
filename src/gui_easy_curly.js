@@ -293,6 +293,7 @@ guiEasy.curly.drawer = function (arg) {
                             <div class="area" id="unplanned-jobs">
                             </div>
                         </div>
+                    </div>
                      `;
     }
     return html;

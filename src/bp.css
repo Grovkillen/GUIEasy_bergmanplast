@@ -14,19 +14,172 @@ div.modal.is-black {
 .logo-big {
     width: calc(7 * var(--default-height-size, 20));
 }
+.post-it {
+    text-align: left;
+    border-radius: 5px;
+    color: black;
+    background-color: rgb(var(--main-sunny-color));
+    margin: 10px;
+    padding: 5px;
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+}
+.post-it > .job {
+    background-color: red;
+}
+.post-it > .beskrivning {
+    background-color: greenyellow;
+}
+.post-it > .antal {
+    background-color: cornflowerblue;
+}
+canvas#digital-twin {
+    height: 70vh;
+    border-radius: 5px;
+    background-color: greenyellow;
+}
 .machine {
     text-align: left;
     color: white;
     border-radius: 5px;
-    background-color: blueviolet;
+    background-color: rgb(var(--main-inverted-color));
     margin-top: 10px;
     margin-bottom: 10px;
     padding: 5px;
 }
-.post-it {
-    border-radius: 5px;
-    background-color: red;
-    margin: 10px;
-    padding: 5px;
-    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+.machine > .planner {
+    background-color: rgb(var(--main-inverted-color));
+    background-image:
+            linear-gradient(90deg,
+            rgba(255, 255, 255, 0.5) 0,
+            rgba(255, 255, 255, 0.5) 1%,
+            transparent 1%
+            ),
+            linear-gradient(180deg,
+            rgb(var(--main-inverted-color)) 50%,
+            transparent 50%
+            ),
+            linear-gradient(90deg,
+            transparent 50%,
+            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0.5) 51%,
+            transparent 51%
+            ),
+            linear-gradient(180deg,
+            rgb(var(--main-inverted-color)) 70%,
+            transparent 70%
+            ),
+            linear-gradient(90deg,
+            transparent 4.25%,
+            rgba(255, 255, 255, 0.4) 4.25%,
+            rgba(255, 255, 255, 0.4) 5.25%,
+            transparent 5.25%,
+
+            transparent 8.5%,
+            rgba(255, 255, 255, 0.4) 8.5%,
+            rgba(255, 255, 255, 0.4) 9.5%,
+            transparent 9.5%,
+
+            transparent 12.5%,
+            rgba(255, 255, 255, 0.4) 12.5%,
+            rgba(255, 255, 255, 0.4) 13.5%,
+            transparent 13.5%,
+
+            transparent 16.5%,
+            rgba(255, 255, 255, 0.4) 16.5%,
+            rgba(255, 255, 255, 0.4) 17.5%,
+            transparent 17.5%,
+
+            transparent 20.75%,
+            rgba(255, 255, 255, 0.4) 20.75%,
+            rgba(255, 255, 255, 0.4) 21.75%,
+            transparent 21.75%,
+
+            transparent 25%,
+            rgba(255, 255, 255, 0.4) 25%,
+            rgba(255, 255, 255, 0.4) 26%,
+            transparent 26%,
+
+            transparent 29%,
+            rgba(255, 255, 255, 0.4) 29%,
+            rgba(255, 255, 255, 0.4) 30%,
+            transparent 30%,
+
+            transparent 33.25%,
+            rgba(255, 255, 255, 0.4) 33.25%,
+            rgba(255, 255, 255, 0.4) 34.25%,
+            transparent 34.25%,
+
+            transparent 37.5%,
+            rgba(255, 255, 255, 0.4) 37.5%,
+            rgba(255, 255, 255, 0.4) 38.5%,
+            transparent 38.5%,
+
+            transparent 41.5%,
+            rgba(255, 255, 255, 0.4) 41.5%,
+            rgba(255, 255, 255, 0.4) 42.5%,
+            transparent 42.5%,
+
+            transparent 46%,
+            rgba(255, 255, 255, 0.4) 46%,
+            rgba(255, 255, 255, 0.4) 47%,
+            transparent 47%,
+
+            transparent 54.25%,
+            rgba(255, 255, 255, 0.4) 54.25%,
+            rgba(255, 255, 255, 0.4) 55.25%,
+            transparent 55.25%,
+
+            transparent 58.25%,
+            rgba(255, 255, 255, 0.4) 58.25%,
+            rgba(255, 255, 255, 0.4) 59.25%,
+            transparent 59.25%,
+
+            transparent 62.5%,
+            rgba(255, 255, 255, 0.4) 62.5%,
+            rgba(255, 255, 255, 0.4) 63.5%,
+            transparent 63.5%,
+
+            transparent 66.5%,
+            rgba(255, 255, 255, 0.4) 66.5%,
+            rgba(255, 255, 255, 0.4) 67.5%,
+            transparent 67.5%,
+
+            transparent 70.75%,
+            rgba(255, 255, 255, 0.4) 70.75%,
+            rgba(255, 255, 255, 0.4) 71.75%,
+            transparent 71.75%,
+
+            transparent 75%,
+            rgba(255, 255, 255, 0.4) 75%,
+            rgba(255, 255, 255, 0.4) 76%,
+            transparent 76%,
+
+            transparent 79.25%,
+            rgba(255, 255, 255, 0.4) 79.25%,
+            rgba(255, 255, 255, 0.4) 80.25%,
+            transparent 80.25%,
+
+            transparent 83.25%,
+            rgba(255, 255, 255, 0.4) 83.25%,
+            rgba(255, 255, 255, 0.4) 84.25%,
+            transparent 84.25%,
+
+            transparent 87.5%,
+            rgba(255, 255, 255, 0.4) 87.5%,
+            rgba(255, 255, 255, 0.4) 88.5%,
+            transparent 88.5%,
+
+            transparent 91.75%,
+            rgba(255, 255, 255, 0.4) 91.75%,
+            rgba(255, 255, 255, 0.4) 92.75%,
+            transparent 92.75%,
+
+            transparent 95.75%,
+            rgba(255, 255, 255, 0.4) 95.75%,
+            rgba(255, 255, 255, 0.4) 96.75%,
+            transparent 96.75%
+            );
+    background-size: 350px calc(4 * var(--default-height-size, 20));
+    background-repeat: repeat-x;
+    min-height: calc(4 * var(--default-height-size, 20));
 }

@@ -4,7 +4,11 @@ guiEasy.curly.page = function (arg) {
     let type = arg[0];
     if (
         type === "start" ||
-        type === "info"
+        type === "planering" ||
+        type === "körning" ||
+        type === "historik" ||
+        type === "info" ||
+        type === "kvalitét"
     ) {
         return guiEasy.curly.page[type];
     }
@@ -12,7 +16,6 @@ guiEasy.curly.page = function (arg) {
 
 guiEasy.curly.page.start = function () {
     return `
-        {{START-WELCOMETEXT}}
-        <br class="got-margin">
+        <canvas id="digital-twin"></canvas>
     `;
 };

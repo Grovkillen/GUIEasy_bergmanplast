@@ -1,8 +1,10 @@
 /* GUIEasy  Copyright (C) 2019-2020  Jimmy "Grovkillen" Westberg */
 //HERE WE ADD REPEATING DATA FETCH FROM UNIT
 guiEasy.tender = function (processID, processType) {
+    guiEasy.tender.ids = [];
     let maxMissed = 1;
-    let missedBuffer = 5;
+    let missedBuffer = 15;
+    let timestampStart = Date.now();
     //data fetcher
     setInterval(function () {
         let timestampNow = Date.now();
@@ -41,15 +43,25 @@ guiEasy.tender = function (processID, processType) {
     setInterval(function () {
         //helpEasy.guiUpdater();
         //Lookup if internet is found
-        if (helpEasy.internet() === false) {
+        if (
+            helpEasy.internet() === false
+        ) {
             guiEasy.popper.topNotifier("internetDown","Internet är nere...", "warning");
-        } else if ( guiEasy.nodes[helpEasy.getCurrentIndex()].notifierID === "internetDown" ) {
+        } else if (
+            guiEasy.nodes[helpEasy.getCurrentIndex()].notifierID === "internetDown"
+        ) {
             guiEasy.popper.topNotifier("internetUp","Internetuppkoppling åter igång.", "success", 5);
         }
         //is the unit reachable
-        if (helpEasy.getCurrentIndex("online") === false && helpEasy.internet() === true) {
+        if (
+            helpEasy.getCurrentIndex("online") === false &&
+            helpEasy.internet() === true &&
+            (Date.now() - timestampStart) > (missedBuffer * 2000)
+        ) {
             guiEasy.popper.topNotifier("unitDown","Serverkontakt nere.", "warning");
-        } else if (guiEasy.nodes[helpEasy.getCurrentIndex()].notifierID === "unitDown") {
+        } else if (
+            guiEasy.nodes[helpEasy.getCurrentIndex()].notifierID === "unitDown"
+        ) {
             guiEasy.nodes[helpEasy.getCurrentIndex()].stats.lastCheck = Date.now();
             helpEasy.setCurrentOnline("online");
             guiEasy.popper.topNotifier("unitUp","Kontakt med servern är åter igång.", "success", 3);
