@@ -128,7 +128,8 @@ const guiEasy = {
             'wave',
             'page',
             'logo',
-            'icon'
+            'icon',
+            'custom'
         ]
     }
 };

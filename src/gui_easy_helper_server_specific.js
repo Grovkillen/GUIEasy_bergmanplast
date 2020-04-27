@@ -57,6 +57,43 @@ helpEasy.updateGraphics = function () {
     midnight2.setHours(24,0,0,0);
     let partOfDay = Math.round((Date.now() - midnight1) / (midnight2 - midnight1)*100)/100;
     style.setProperty("--now-width", partOfDay.toString());
+    //update clock
+    helpEasy.updateGraphics.clock("digital");
+
+};
+
+helpEasy.updateGraphics.clock = function(type) {
+    let date = new Date();
+
+    let hours = ((date.getHours() + 11) % 12 + 1);
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let hour, minute, second;
+
+    if (type === "analog") {
+        hour = hours * 30;
+        minute = minutes * 6;
+        second = seconds * 6;
+
+        document.querySelector('.analog-clock.hour').innerText = `rotate(${hour}deg)`;
+        document.querySelector('.analog-clock.minute').style.transform = `rotate(${minute}deg)`;
+        document.querySelector('.analog-clock.second').style.transform = `rotate(${second}deg)`;
+    }
+    if (type === "digital") {
+        let month = '' + (date.getMonth() + 1);
+        let day = '' + date.getDate();
+        let year = date.getFullYear();
+        month = ("0" + month).substr(-2,2);
+        day = ("0" + day).substr(-2,2);
+
+        hour = ("0" + hours).substr(-2,2);
+        minute = ("0" + minutes).substr(-2,2);
+        second = ("0" + seconds).substr(-2,2);
+        document.querySelector('.digital-clock.hour').innerText = hour;
+        document.querySelector('.digital-clock.minute').innerText = minute;
+        document.querySelector('.digital-clock.second').innerText = second;
+        document.querySelector('.digital-clock.date').innerText = [year, month, day].join('-');
+    }
 };
 
 helpEasy.updateGraphics["jobb.ini"] = function (object) {

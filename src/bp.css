@@ -266,7 +266,7 @@ canvas#digital-twin {
     display: flex;
     position: absolute;
     top: calc(2 * var(--default-height-size));
-    min-height: calc(2.75 * var(--default-height-size));
+    min-height: calc(2.73 * var(--default-height-size));
     width: calc(var(--now-width)*var(--day-width));
     background-color: rgba(var(--main-inverted-color), 0.75);
 }
@@ -276,4 +276,71 @@ canvas#digital-twin {
     margin-left: calc(100% - 7.7px);
     margin-top: -11px;
     font-size: calc(0.5 * var(--default-font-size));
+}
+.analog-clock {
+    border-style: solid;
+    border-width: 3px;
+    border-radius: 100%;
+    border-color: rgb(var(--main-inverted-color));
+    width: calc(3 * var(--default-font-size));
+    height: calc(3 * var(--default-font-size));
+}
+.analog-clock.background {
+    border: unset;
+    overflow: hidden;
+    position: relative;
+}
+.analog-clock.hour,
+.analog-clock.minute,
+.analog-clock.second,
+.analog-clock.dot {
+    border: unset;
+    border-radius: unset;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    transform-origin: bottom center;
+}
+.analog-clock.hour {
+    height: 30%;
+    top: -30%;
+    width: 6px;
+    background: rgb(var(--main-font-color));
+    transform: rotate(0deg);
+}
+.analog-clock.minute {
+    height: 42%;
+    top: -42%;
+    width: 4px;
+    background: rgb(var(--main-font-color));
+    transform: rotate(90deg);
+}
+.analog-clock.second {
+    height: 48%;
+    top: -48%;
+    width: 2px;
+    background: rgb(var(--main-warning-color));
+    transform: rotate(180deg);
+}
+.analog-clock.dot {
+    height: 15%;
+    width: 15%;
+    border-radius: 100%;
+    background: rgb(var(--main-inverted-color));
+}
+.digital-clock {
+    display: flex;
+    margin: unset;
+    font-size: calc(1.1 * var(--default-font-size));
+}
+.digital-clock.hour::after,
+.digital-clock.minute::after{
+    content: ":";
+}
+li.nav-middle-area {
+    flex-direction: column;
+    align-items: center;
 }

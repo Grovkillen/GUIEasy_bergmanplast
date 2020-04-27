@@ -241,7 +241,7 @@ guiEasy.curly.notifier = function (arg) {
 
 guiEasy.curly.navbar = function () {
     const tabs = guiEasy.tabs;
-    const middle = "{{UNITNAME}}";
+    const middle = "{{CUSTOM-DIGITAL-CLOCK}}";
     let html = `
             <nav id="navbar">
                 <div class="got-wallpaper"></div>
@@ -314,5 +314,32 @@ guiEasy.curly.info = function (what) {
 guiEasy.curly.gamepad = function () {
     let html = "<div id='template-gamepad'>{{ICON-GAMEPAD}}</div>";
     html += "<div id='active-gamepads' class='gamepads'></div>";
+    return html;
+};
+
+guiEasy.curly.custom = function (what) {
+    let html = "";
+    if (what[0] + "-" + what[1] === "analog-clock") {
+        html = `
+            <div class="analog-clock">
+                <div class="analog-clock background">
+                    <span class="analog-clock hour"></span>
+                    <span class="analog-clock minute"></span>
+                    <span class="analog-clock second"></span>
+                    <span class="analog-clock dot"></span>
+                </div>
+            </div>
+         `;
+    }
+    if (what[0] + "-" + what[1] === "digital-clock") {
+        html = `
+            <div class="digital-clock">
+                    <span class="digital-clock hour"></span>
+                    <span class="digital-clock minute"></span>
+                    <span class="digital-clock second"></span>
+            </div>
+            <div class="digital-clock date"></div>
+         `;
+    }
     return html;
 };
