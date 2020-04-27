@@ -13,47 +13,83 @@ div.modal.is-black {
     background-color: rgba(255,255,255,1);
 }
 .logo-big {
-    width: calc(7 * var(--default-height-size, 20));
-}
-.post-it {
-    text-align: left;
-    border-radius: 5px;
-    color: black;
-    background-color: rgb(var(--main-sunny-color));
-    margin: 10px;
-    padding: 5px;
-    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
-}
-.post-it > .job {
-    background-color: red;
-}
-.post-it > .beskrivning {
-    background-color: greenyellow;
-}
-.post-it > .antal {
-    background-color: cornflowerblue;
+    width: calc(7 * var(--default-height-size));
 }
 canvas#digital-twin {
     height: 70vh;
     border-radius: 5px;
     background-color: greenyellow;
 }
-.machine {
+.post-it {
+    text-align: left;
     border-radius: 5px;
-    background-color: rgb(var(--main-inverted-color));
+    color: black;
+    opacity: 0.75;
+    background-color: rgb(var(--main-sunny-color));
+    margin: 10px;
+    padding: 5px;
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+}
+.post-it > .beskrivning {
+    opacity: 1;
+}
+.job-container {
+    width: 100%;
+    display: flex;
+    position: absolute;
+    overflow: hidden;
+    top: calc(2 * var(--default-height-size));
+}
+.job-container > .post-it {
+    pointer-events: none;
+    border-radius: unset;
+    margin: unset;
+    padding: unset;
+    display: inline-flex;
+    box-shadow: unset;
+    height: calc(1.2 * var(--default-height-size));
+}
+.job-container > .post-it::before {
+    content: "";
+    background-color: rgba(var(--main-success-color), 0.5);
+    width: calc(var(--width-before) * var(--day-width));
+    max-width: calc(var(--width-before) * var(--day-width));
+}
+.job-container > .post-it::after {
+    content: "";
+    background-color: rgba(var(--main-warning-color), 0.5);
+    width: calc(var(--width-after) * var(--day-width));
+    max-width: calc(var(--width-after) * var(--day-width));
+}
+.job-container > .post-it > .job {
+    display: none;
+}
+.job-container > .post-it > .beskrivning {
+    text-indent: 3px;
+    width: calc(var(--width-job) * var(--day-width));
+    max-width: calc(var(--width-job) * var(--day-width));
+}
+.job-container > .post-it > .antal {
+    display: none;
+}
+.machine {
+    position: relative;
+    border-radius: 5px;
+    background-color: rgb(var(--main-bg-color));
     margin-top: 10px;
     margin-bottom: 10px;
 }
 .machine > .name {
+    pointer-events: none;
     text-align: left;
     color: rgb(var(--main-font-color));
     padding: 5px;
 }
 .machine > .planner {
-
+    pointer-events: none;
     overflow: hidden;
     margin-bottom: 5px;
-    background-color: rgb(var(--main-inverted-color));
+    background-color: rgb(var(--main-bg-color));
     background-image:
             linear-gradient(90deg,
             rgba(var(--main-font-color), 0.9) 0,
@@ -61,7 +97,7 @@ canvas#digital-twin {
             transparent 1%
             ),
             linear-gradient(180deg,
-            rgb(var(--main-inverted-color)) 50%,
+            rgb(var(--main-bg-color)) 50%,
             transparent 50%
             ),
             linear-gradient(90deg,
@@ -71,7 +107,7 @@ canvas#digital-twin {
             transparent 51%
             ),
             linear-gradient(180deg,
-            rgb(var(--main-inverted-color)) 70%,
+            rgb(var(--main-bg-color)) 70%,
             transparent 70%
             ),
             linear-gradient(90deg,
@@ -206,18 +242,38 @@ canvas#digital-twin {
             rgba(var(--main-font-color), 0.9) 97%,
             transparent 97%
             );
-    background-size: var(--day-width) calc(4 * var(--default-height-size, 20));
+    background-size: var(--day-width) calc(4 * var(--default-height-size));
     background-repeat: repeat-x;
-    min-height: calc(4 * var(--default-height-size, 20));
+    min-height: calc(4 * var(--default-height-size));
 }
 .planner > label {
+    pointer-events: none;
     display: table-cell;
     border: unset;
-    font-size: calc(0.75 * var(--default-font-size));
-    width: var(--day-width);
-    min-width: var(--day-width);
-    max-width: var(--day-width);
+    font-size: calc(12 * var(--day-width) / 200 + 6px);
+    height: 40px;
+    width: calc(var(--day-width));
+    min-width: calc(var(--day-width));
+    max-width: calc(var(--day-width));
     position: relative;
-    top: calc(3.12 * var(--default-height-size, 20));
-    background-color: rgb(var(--main-inverted-color));
+    top: calc(3.12 * var(--default-height-size));
+    background-color: rgb(var(--main-bg-color));
+}
+.planner > label.helgdag {
+    background-color: rgb(var(--main-info-color));
+}
+.planner-now {
+    display: flex;
+    position: absolute;
+    top: calc(2 * var(--default-height-size));
+    min-height: calc(2.75 * var(--default-height-size));
+    width: calc(var(--now-width)*var(--day-width));
+    background-color: rgba(var(--main-inverted-color), 0.75);
+}
+.planner-now::after {
+    content: "\a0\25bc";
+    color: rgb(var(--main-font-color));
+    margin-left: calc(100% - 7.7px);
+    margin-top: -11px;
+    font-size: calc(0.5 * var(--default-font-size));
 }

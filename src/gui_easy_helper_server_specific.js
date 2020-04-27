@@ -49,6 +49,14 @@ helpEasy.updateGraphics = function () {
             helpEasy.updateGraphics[key](object[key].data);
         }
     });
+    //update now in planners
+    let style = document.documentElement.style;
+    let midnight1 = new Date();
+    let midnight2 = new Date();
+    midnight1.setHours(0,0,0,0);
+    midnight2.setHours(24,0,0,0);
+    let partOfDay = Math.round((Date.now() - midnight1) / (midnight2 - midnight1)*100)/100;
+    style.setProperty("--now-width", partOfDay.toString());
 };
 
 helpEasy.updateGraphics["jobb.ini"] = function (object) {
@@ -84,7 +92,7 @@ helpEasy.updateGraphics["jobb.ini"] = function (object) {
                                     <div class="beskrivning" id="job-beskrivning-` + job + `">` + jobData.info.beskrivning + `</div>
                                     <div class="antal" id="job-antal-` + job + `">` + jobData.jobb.antal + ` ` + jobData.jobb.enhet + `</div>
                                 `;
-                                element.dataset.length = "100";
+                                element.style = "--width-job: 3; --width-before: 0.25; --width-after: 0.25;";
                                 element.className = "post-it";
                                 element.draggable = true;
                                 element.setAttribute("ondragstart", "helpEasy.drag(event)");
@@ -112,6 +120,8 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                 element.innerHTML = `
                                     <div class="name" id="machine-place-` + machine.id + `">`  + machine.namn + ": " + machine.namn + `</div>
                                     <div class="planner" id="planner-` + machine.id + `"> ` + helpEasy.generateLabelsOfDates() + `</div>
+                                    <div class="planner-now"></div>
+                                    <div class="job-container" id="jobs-` + machine.id + `"></div>
                                 `;
                 element.className = "machine";
                 element.setAttribute("ondrop", "helpEasy.drop(event)");
@@ -120,6 +130,10 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
             }
         }
     }
+};
+
+helpEasy.updateGraphics["helgdagar.ini"] = function (object) {
+    console.log(object);
 };
 
 helpEasy.generateLabelsOfDates = function() {
@@ -148,7 +162,8 @@ helpEasy.allowDrop = function(event) {
 
 helpEasy.drop = function(event) {
     let id = event.dataTransfer.getData("text");
-    event.target.appendChild(document.getElementById(id));
+    let container = document.getElementById("jobs-" + event.target.id);
+    container.appendChild(document.getElementById(id));
 };
 
 helpEasy.drag = function(event) {

@@ -90,7 +90,8 @@ const guiEasy = {
         },
         'get':[
             {'endpoint':'jobb.ini', 'ttl_fallback':5000},
-            {'endpoint':'maskin.ini'}
+            {'endpoint':'maskin.ini'},
+            {'endpoint':'helgdagar.ini', 'ttl_fallback':86400000}
         ],
         'post':[
             //{'endpoint':'webhook'}
