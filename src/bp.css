@@ -32,6 +32,7 @@ canvas#digital-twin {
 }
 .post-it > .beskrivning {
     opacity: 1;
+    overflow: hidden;
 }
 .job-container {
     width: 100%;
@@ -61,6 +62,10 @@ canvas#digital-twin {
     width: calc(var(--width-after) * var(--day-width));
     max-width: calc(var(--width-after) * var(--day-width));
 }
+.job-container > .post-it {
+    position: relative;
+    left: calc(-1 * var(--width-done-total, 0) * var(--day-width));
+}
 .job-container > .post-it > .job {
     display: none;
 }
@@ -69,10 +74,17 @@ canvas#digital-twin {
     width: calc(var(--width-job) * var(--day-width));
     max-width: calc(var(--width-job) * var(--day-width));
 }
+.job-container > .post-it.active > .beskrivning {
+    text-indent: calc(var(--width-done-job, 0) * var(--day-width) + 3px);
+}
 .job-container > .post-it > .antal {
     display: none;
 }
+.job-container > .post-it:nth-child(1):not(.active) {
+    margin-left: calc(var(--now-width)*var(--day-width));
+}
 .machine {
+    overflow: hidden;
     position: relative;
     border-radius: 5px;
     background-color: rgb(var(--main-bg-color));
@@ -87,8 +99,7 @@ canvas#digital-twin {
 }
 .machine > .planner {
     pointer-events: none;
-    overflow: hidden;
-    margin-bottom: 5px;
+    margin-bottom: calc(2 * var(--default-height-size));
     background-color: rgb(var(--main-bg-color));
     background-image:
             linear-gradient(90deg,
@@ -244,14 +255,14 @@ canvas#digital-twin {
             );
     background-size: var(--day-width) calc(4 * var(--default-height-size));
     background-repeat: repeat-x;
-    min-height: calc(4 * var(--default-height-size));
+    min-height: calc(3.3 * var(--default-height-size));
 }
 .planner > label {
+    overflow-x: hidden;
     pointer-events: none;
     display: table-cell;
     border: unset;
-    font-size: calc(12 * var(--day-width) / 200 + 6px);
-    height: 40px;
+    font-size: calc( 12 * var(--day-width) / 200 + 6px);
     width: calc(var(--day-width));
     min-width: calc(var(--day-width));
     max-width: calc(var(--day-width));
@@ -259,8 +270,12 @@ canvas#digital-twin {
     top: calc(3.12 * var(--default-height-size));
     background-color: rgb(var(--main-bg-color));
 }
+.planner > label:nth-child(1) {
+    padding-left: 1px;
+}
 .planner > label.helgdag {
-    background-color: rgb(var(--main-info-color));
+    background-color: rgb(var(--main-warning-color));
+    color: rgb(var(--main-bg-color));
 }
 .planner-now {
     display: flex;

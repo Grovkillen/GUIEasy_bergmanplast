@@ -65,12 +65,13 @@ helpEasy.updateGraphics = function () {
 helpEasy.updateGraphics.clock = function(type) {
     let date = new Date();
 
-    let hours = ((date.getHours() + 11) % 12 + 1);
+    let hours = date.getHours();
     let minutes = date.getMinutes();
     let seconds = date.getSeconds();
     let hour, minute, second;
 
     if (type === "analog") {
+        hours = ((hours + 11) % 12 + 1);
         hour = hours * 30;
         minute = minutes * 6;
         second = seconds * 6;
@@ -89,6 +90,7 @@ helpEasy.updateGraphics.clock = function(type) {
         hour = ("0" + hours).substr(-2,2);
         minute = ("0" + minutes).substr(-2,2);
         second = ("0" + seconds).substr(-2,2);
+
         document.querySelector('.digital-clock.hour').innerText = hour;
         document.querySelector('.digital-clock.minute').innerText = minute;
         document.querySelector('.digital-clock.second').innerText = second;
@@ -170,7 +172,38 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
 };
 
 helpEasy.updateGraphics["helgdagar.ini"] = function (object) {
-    console.log(object);
+    let year = new Date().getFullYear();
+    let keys = Object.keys(object["årsdagar"]);
+    keys.map(key => {
+        let selector = ".date-" + year + "-" + key;
+        let dates = document.querySelectorAll(selector);
+        if (dates.length > 0) {
+            for (let i = 0; i < dates.length; i++) {
+                dates[i].classList.remove("date-" + year + "-" + key);
+                dates[i].classList.add("helgdag");
+                dates[i].innerText = object["årsdagar"][key];
+            }
+        }
+    });
+    keys = Object.keys(object);
+    keys.map(key => {
+        if (!isNaN(parseInt(key))) {
+            let subKeys = Object.keys(object[key]);
+            if (subKeys.length > 0) {
+                subKeys.map(subKey => {
+                    let selector = ".date-" + key + "-" + subKey;
+                    let dates = document.querySelectorAll(selector);
+                    if (dates.length > 0) {
+                        for (let i = 0; i < dates.length; i++) {
+                            dates[i].classList.remove("date-" + key + "-" + subKey);
+                            dates[i].classList.add("helgdag");
+                            dates[i].innerText = object[key][subKey];
+                        }
+                    }
+                })
+            }
+        }
+    })
 };
 
 helpEasy.generateLabelsOfDates = function() {
@@ -187,7 +220,7 @@ helpEasy.generateLabelsOfDates = function() {
         if (day.length < 2) {
             day = '0' + day;
         }
-        html += "<label>" + [year, month, day].join('-') + "</label>";
+        html += "<label class='date-" + [year, month, day].join('-') + "'>" + [year, month, day].join('-') + "</label>";
     }
 
     return html;
