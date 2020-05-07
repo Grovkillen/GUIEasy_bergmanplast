@@ -3,17 +3,17 @@
 helpEasy.getDataFromNode = function (array, index, endpoint, ttl_fallback) {
     array[index]["scheduler"].shift();
     let timeStart = Date.now();
-    let path = "http://" + array[index].ip + "/" + endpoint + "?callback=" + timeStart;
+    let path = "http://" + array[index].ip + endpoint + "?callback=" + timeStart;
     let nextRun = Date.now() + array[index].stats[endpoint].TTL_fallback;
     fetch(path)
         .then(res => res.text())
         .then((dataFromFile) => {
             array[index]["live"][endpoint] = {};
             array[index]["live"][endpoint].raw = dataFromFile;
-                array[index]["live"][endpoint].timestamp = Date.now();
-                let iniData = helpEasy.iniFileToObject(dataFromFile);
-                if (iniData.info.TTL !== undefined) {
-                    array[index]["live"][endpoint].TTL = iniData.info.TTL;
+            array[index]["live"][endpoint].data = helpEasy.iniFileToObject(dataFromFile, true);
+            array[index]["live"][endpoint].timestamp = Date.now();
+                if (array[index]["live"][endpoint].data.info.TTL !== undefined) {
+                    array[index]["live"][endpoint].TTL = array[index]["live"][endpoint].data.info.TTL;
                 } else {
                     array[index]["live"][endpoint].TTL = ttl_fallback;
                 }
@@ -40,13 +40,14 @@ helpEasy.getDataFromNode = function (array, index, endpoint, ttl_fallback) {
 
 helpEasy.updateGraphics = function () {
     guiEasy.current.gui = helpEasy.getCurrentIndex();
-    let object = guiEasy.nodes[guiEasy.current.gui]["live"];
+    let object = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"];
     let keys = Object.keys(object);
     keys.map(key => {
         if (key.includes(".ini")) {
             object[key].data = helpEasy.iniFileToObject(object[key].raw, true);
             //update with new jobs
-            helpEasy.updateGraphics[key](object[key].data);
+            let type = key.replace(/^.*[\\\/]/, '');
+            helpEasy.updateGraphics[type](object[key].data);
         }
     });
     //update now in planners
@@ -59,7 +60,6 @@ helpEasy.updateGraphics = function () {
     style.setProperty("--now-width", partOfDay.toString());
     //update clock
     helpEasy.updateGraphics.clock("digital");
-
 };
 
 helpEasy.updateGraphics.clock = function(type) {
@@ -99,73 +99,135 @@ helpEasy.updateGraphics.clock = function(type) {
 };
 
 helpEasy.updateGraphics["jobb.ini"] = function (object) {
+    if (object["jobb"] !== undefined) {
+        let jobContainer = document.getElementById(object["maskin"]["id"]);
+        if (object["maskin"]["id"] === null || jobContainer === undefined) {
+            jobContainer = document.getElementById("unplanned-jobs");
+        }
+        let job = object["info"]["order"] + "-" + object["info"]["artikel"];
+        helpEasy.createJobDivs(job, jobContainer);
+        return;
+    }
     if (object["ej planerade"]["antal"] > 0) {
         let jobContainer = document.getElementById("unplanned-jobs");
         let jobs = object["ej planerade"]["jobb"];
         jobs.map(job => {
-            let element = document.getElementById(job);
-            if (helpEasy.findInArray(job, guiEasy.tender.ids) > -1) {    //filter away possible duplicates since we map the array we might get duplicates...
-                fetch("/data/jobb/" + job + "/jobb.ini?callback=" + Date.now())
-                    .then(res => res.text())
-                    .then((dataFromFile) => {
-                        let jobData = helpEasy.iniFileToObject(dataFromFile);
-                            //we should update the existing element if needed
-                            if (typeof(element) !== "undefined" && element !== null) {
-                                document.getElementById("job-" + job).innerText = job;
-                                document.getElementById("job-beskrivning-" + job).innerText = jobData.info.beskrivning;
-                                document.getElementById("job-antal-" + job).innerText = jobData.jobb.antal + " " + jobData.jobb.enhet;
-                            }
-                        }
-                    );
-            } else {
-                guiEasy.tender.ids.push(job);
-                fetch("/data/jobb/" + job + "/jobb.ini?callback=" + Date.now())
-                    .then(res => res.text())
-                    .then((dataFromFile) => {
-                            let jobData = helpEasy.iniFileToObject(dataFromFile);
-                                //no element exist, create it
-                                element = document.createElement("div");
-                                element.id = job;
-                                element.innerHTML = `
-                                    <div class="job" id="job-` + job + `">` + job + `</div>
-                                    <div class="beskrivning" id="job-beskrivning-` + job + `">` + jobData.info.beskrivning + `</div>
-                                    <div class="antal" id="job-antal-` + job + `">` + jobData.jobb.antal + ` ` + jobData.jobb.enhet + `</div>
-                                `;
-                                element.style = "--width-job: 3; --width-before: 0.25; --width-after: 0.25;";
-                                element.className = "post-it";
-                                element.draggable = true;
-                                element.setAttribute("ondragstart", "helpEasy.drag(event)");
-                                jobContainer.appendChild(element);
-                            }
-                        );
+            helpEasy.createJobDivs(job, jobContainer);
+        });
+    }
+    if (object["planerade"]["antal"] > 0) {
+        let jobContainer = document.body;
+        let jobs = object["planerade"]["jobb"];
+        jobs.map(job => {
+            helpEasy.createJobDivs(job, jobContainer);
+            if (guiEasy.nodes[helpEasy.getCurrentIndex()]["live"][job] !== undefined) {
+                let machine = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"][job]["maskin"]["id"];
+                let machineContainer = document.getElementById(machine);
+                if (machineContainer !== null) {
+                    console.log(guiEasy.nodes[helpEasy.getCurrentIndex()]["live"][job]);
+                }
             }
-        })
+        });
     }
 };
 
+helpEasy.createJobDivs = function(job, jobContainer) {
+        let element = document.getElementById(job);
+        let jobData = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"]["jobb/" + job + "/jobb.ini"];
+        if (helpEasy.findInArray(job, guiEasy.tender.ids) === -1) {
+            guiEasy.tender.ids.push(job);
+            helpEasy.scheduleFetch(guiEasy.nodes, helpEasy.getCurrentIndex(), "jobb/" + job + "/jobb.ini");
+        } else if (jobData !== undefined && element === null && helpEasy.findInArray(job, guiEasy.tender.ids) > -1) {
+            //no element exist, create it
+            element = document.createElement("div");
+            element.id = job;
+            element.innerHTML = `
+                        <div class="job" id="job-` + job + `">` + job + `</div>
+                        <div class="beskrivning" id="job-beskrivning-` + job + `">` + jobData.data.info.beskrivning + `</div>
+                        <div class="antal" id="job-antal-` + job + `">` + jobData.data.jobb.antal + ` ` + jobData.data.jobb.enhet + `</div>
+                    `;
+            element.style = "--width-job: 3; --width-before: 0.25; --width-after: 0.25;";
+            element.className = "post-it";
+            element.draggable = true;
+            element.setAttribute("ondragstart", "helpEasy.drag(event)");
+            jobContainer.appendChild(element);
+        } else if (typeof(element) !== "undefined" && element !== null) {
+                let lookup = [
+                    ["job-", job],
+                    ["job-beskrivning-", jobData.data.info.beskrivning],
+                    ["job-antal-", jobData.data.jobb.antal + " " + jobData.data.jobb.enhet]
+                ]
+                for (let i = 0; i < lookup.length; i++) {
+                    let subElement = document.getElementById(lookup[i][0] + job);
+                    if (subElement.innerText !== lookup[i][1]) {
+                        subElement.innerText = lookup[i][1];
+                    }
+                }
+            }
+};
+
 helpEasy.updateGraphics["maskin.ini"] = function (object) {
+    if (object["info"]["antal maskiner"] === undefined) {
+        //return;
+    }
     if (object["info"]["antal maskiner"] > 0) {
         let machineContainer = document.getElementById("planering-container");
         for (let i = 1; i < (object["info"]["antal maskiner"] + 1); i++) {
             let machine = object["maskin " + i];
-            let element = document.getElementById(machine.id);
-            if (typeof(element) !== "undefined" && element !== null) {
-                //we should update the existing element if needed
-
-            } else {
-                //no element exist, create it
-                element = document.createElement("div");
-                element.id = machine.id;
-                element.innerHTML = `
-                                    <div class="name" id="machine-place-` + machine.id + `">`  + machine.namn + ": " + machine.namn + `</div>
-                                    <div class="planner" id="planner-` + machine.id + `"> ` + helpEasy.generateLabelsOfDates() + `</div>
+            let element = document.getElementById("machine-" + i);
+            if (helpEasy.findInArray(machine.extruder.toLowerCase(), guiEasy.tender.ids) === -1) {
+                guiEasy.tender.ids.push(machine.extruder.toLowerCase());
+                let endpoint;
+                if (machine.grupp === null) {
+                    endpoint = "maskin/" + machine.extruder + "/maskin.ini";
+                } else {
+                    endpoint = "maskin/" + machine.grupp + "/" + machine.extruder + "/maskin.ini";
+                }
+                helpEasy.scheduleFetch(guiEasy.nodes, helpEasy.getCurrentIndex(), endpoint);
+                if (typeof (element) !== "undefined" && element !== null) {
+                    //we should update the existing element if needed
+                    document.getElementById("planner-" + i).innerHTML = helpEasy.generateLabelsOfDates();
+                } else {
+                    //no element exist, create it
+                    element = document.createElement("div");
+                    element.id = machine.extruder;
+                    element.setAttribute("data-machine", machine.extruder);
+                    element.setAttribute("data-unique", "machine-" + i);
+                    element.setAttribute("data-group", machine.grupp);
+                    element.innerHTML = `
+                                    <div class="name" id="machine-place-` + machine.extruder + `">` + machine.extruder + `: <div id="machine-` + machine.extruder + `-current-job"> </div> </div>
+                                    <div class="planner" id="planner-` + i + `"> ` + helpEasy.generateLabelsOfDates() + `</div>
                                     <div class="planner-now"></div>
-                                    <div class="job-container" id="jobs-` + machine.id + `"></div>
+                                    <div class="job-container" id="jobs-machine-` + machine.extruder + `"></div>
                                 `;
-                element.className = "machine";
-                element.setAttribute("ondrop", "helpEasy.drop(event)");
-                element.setAttribute("ondragover", "helpEasy.allowDrop(event)");
-                machineContainer.appendChild(element);
+                    element.className = "machine";
+                    element.setAttribute("ondrop", "helpEasy.drop(event)");
+                    element.setAttribute("ondragover", "helpEasy.allowDrop(event)");
+                    if (machine.grupp !== null) {
+                        let id = machine.grupp.replace("-", "_");
+                        id = id.replace(" ", "-") + "-area";
+                        let container = document.getElementById(id);
+                        if (typeof (container) !== "undefined" && container !== null) {
+                            //we already got the container
+                            container.appendChild(element);
+                        } else {
+                            //
+                            let group = document.createElement("div");
+                            group.id = id;
+                            group.className = "area";
+                            group.innerHTML = `
+                            <div class="area-title">` + machine.grupp
+                                + `<button id="button-min-` + id + `" data-click="area-min-` + id + `">` + guiEasy.curly.icon(["minimize"]) + `</button>`
+                                + `<button id="button-max-` + id + `" data-click="area-max-` + id + `"` + ` class="is-hidden">` + guiEasy.curly.icon(["maximize"]) + `</button>
+                            </div>
+                        `;
+                            group.appendChild(element);
+                            machineContainer.appendChild(group);
+                        }
+                    } else {
+                        machineContainer.appendChild(element);
+                    }
+                }
             }
         }
     }
@@ -176,12 +238,15 @@ helpEasy.updateGraphics["helgdagar.ini"] = function (object) {
     let keys = Object.keys(object["årsdagar"]);
     keys.map(key => {
         let selector = ".date-" + year + "-" + key;
+        let year2 = parseInt("" + year) + 1;
+        selector += ", .date-" + year2 + "-" + key;
         let dates = document.querySelectorAll(selector);
         if (dates.length > 0) {
             for (let i = 0; i < dates.length; i++) {
-                dates[i].classList.remove("date-" + year + "-" + key);
-                dates[i].classList.add("helgdag");
-                dates[i].innerText = object["årsdagar"][key];
+                if (!dates[i].classList.contains("helgdag")) {
+                    dates[i].classList.add("helgdag");
+                    dates[i].innerText = object["årsdagar"][key];
+                }
             }
         }
     });
@@ -195,9 +260,10 @@ helpEasy.updateGraphics["helgdagar.ini"] = function (object) {
                     let dates = document.querySelectorAll(selector);
                     if (dates.length > 0) {
                         for (let i = 0; i < dates.length; i++) {
-                            dates[i].classList.remove("date-" + key + "-" + subKey);
-                            dates[i].classList.add("helgdag");
-                            dates[i].innerText = object[key][subKey];
+                            if (!dates[i].classList.contains("helgdag")) {
+                                dates[i].classList.add("helgdag");
+                                dates[i].innerText = object[key][subKey];
+                            }
                         }
                     }
                 })
@@ -232,10 +298,35 @@ helpEasy.allowDrop = function(event) {
 
 helpEasy.drop = function(event) {
     let id = event.dataTransfer.getData("text");
-    let container = document.getElementById("jobs-" + event.target.id);
-    container.appendChild(document.getElementById(id));
+    let child = document.getElementById(id);
+    let container = document.getElementById("jobs-machine-" + event.target.id);
+    container.appendChild(child);
+    let i = 0;
+    while( (child = child.previousSibling) != null )
+        i++;
+    let args = `updatePlanner|
+        [job=` + id + `]
+        [addedTo=` + event.target.getAttribute("machine") + `]
+        [addedToGroup=` + event.target.getAttribute("group") + `]
+        [jobQueIndex=` + i + `]
+    `;
+    helpEasy.webhook(args);
 };
 
 helpEasy.drag = function(event) {
     event.dataTransfer.setData("text", event.target.id);
+};
+
+helpEasy.webhook = function (args) {
+    args = args.replace(/[\n\r]/gm,"");
+    args = args.replace(/\s/g,"");
+    let formData = new FormData();
+    formData.append("enctype", "application/x-www-form-urlencoded");
+    let url = "/webhook?" + args;
+    fetch(url, {
+        method : "POST",
+        body: formData
+    }).then(
+        response => response.text()
+    );
 };

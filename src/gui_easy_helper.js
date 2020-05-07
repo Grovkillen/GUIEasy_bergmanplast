@@ -300,6 +300,15 @@ const helpEasy = {
         } else {
             //relay runner
             let x = guiEasy.fetchSettings;
+            if (array[index].stats[endpoint] === undefined) {
+                array[index].stats[endpoint] = {
+                    "TTL_fallback": 5000,
+                    "run": -1,
+                    "timestamp": Date.now()
+                };
+                array[index]["scheduler"].push([0, endpoint]);
+                array[index]["scheduler"].sort();
+            }
             let TTL_fallback = array[index].stats[endpoint].TTL_fallback;
             helpEasy.getDataFromNode(array, index , endpoint, TTL_fallback);
             // take a snapshot (plus timestamp it) of the endpointData array and store it
@@ -471,6 +480,8 @@ const helpEasy = {
               if ((keyValue[1].charAt(0) === "0" && keyValue[1].length > 1) || isNaN(Number(keyValue[1]))) {   // leading zeros are interpreted as string values
                   if (pipe2array && keyValue[1].trim().includes("|")) {
                       object[sectionName][keyValue[0].trim()] = keyValue[1].trim().split("|");
+                  } else if (keyValue[1].trim() === "null") {
+                      object[sectionName][keyValue[0].trim()] = null;
                   } else {
                       object[sectionName][keyValue[0].trim()] = keyValue[1].trim();
                   }

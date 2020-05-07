@@ -34,6 +34,9 @@ canvas#digital-twin {
     opacity: 1;
     overflow: hidden;
 }
+body > .post-it {
+    display: none;
+}
 .job-container {
     width: 100%;
     display: flex;
@@ -267,7 +270,7 @@ canvas#digital-twin {
     min-width: calc(var(--day-width));
     max-width: calc(var(--day-width));
     position: relative;
-    top: calc(3.12 * var(--default-height-size));
+    top: calc(3.1 * var(--default-height-size));
     background-color: rgb(var(--main-bg-color));
 }
 .planner > label:nth-child(1) {
@@ -358,4 +361,7 @@ canvas#digital-twin {
 li.nav-middle-area {
     flex-direction: column;
     align-items: center;
+}
+div.area {
+    overflow: hidden;
 }

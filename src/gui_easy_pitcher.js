@@ -11,7 +11,7 @@ guiEasy.pitcher = async function (processID, processType) {
             path += window.location.pathname;
             path = path.replace("index.html", "custom.json");
         } else {
-            path += "/html/src/custom.json";
+            path += "/custom.json";
         }
         await fetch(path)
             .then(res => res.json())
@@ -37,7 +37,6 @@ guiEasy.pitcher = async function (processID, processType) {
         if (LCX > maxLoopsX) {
             helpEasy.addToLogDOM("'live' not working!", 0, "warn");
             helpEasy.processDone(processID, processType);
-            return;
         }
         if (guiEasy.current.live !== undefined) {
             clearInterval(x);
@@ -57,7 +56,6 @@ guiEasy.pitcher = async function (processID, processType) {
         if (LCY > maxLoopsY) {
             helpEasy.addToLogDOM("'gui' not working!", 0, "warn");
             helpEasy.processDone(processID, processType);
-            return;
         }
         if (guiEasy.current.gui !== undefined) {
             clearInterval(y);

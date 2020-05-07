@@ -46,7 +46,7 @@ const guiEasy = {
         'maxToKeep': 5,                                         //Minutes...
         'minToKeep': 1,
         'intervalGUIupdater': 1000,                             //ms
-        'intervalTimeKeeper': 700,                              //min period in-between fetches
+        'intervalTimeKeeper': 50,                               //min period in-between fetches
         'maxToKeepMs': function () {
             return guiEasy.maxToKeep * 60 * 1000;
         },
@@ -90,7 +90,7 @@ const guiEasy = {
         },
         'get':[
             {'endpoint':'jobb.ini', 'ttl_fallback':5000},
-            {'endpoint':'maskin.ini'},
+            {'endpoint':'maskin.ini', 'ttl_fallback':5000},
             {'endpoint':'helgdagar.ini', 'ttl_fallback':86400000}
         ],
         'post':[
