@@ -46,7 +46,7 @@ const guiEasy = {
         'maxToKeep': 5,                                         //Minutes...
         'minToKeep': 1,
         'intervalGUIupdater': 1000,                             //ms
-        'intervalTimeKeeper': 50,                               //min period in-between fetches
+        'intervalTimeKeeper': 25,                               //min period in-between fetches (bump this to 50-100 if the servers isn't keeping up)
         'maxToKeepMs': function () {
             return guiEasy.maxToKeep * 60 * 1000;
         },
@@ -86,7 +86,7 @@ const guiEasy = {
     ],
     'endpoints':{
         'defaultTTL': function () {
-            return 60000        //Once a minute
+            return 60000        //Once a minute (leave this as is)
         },
         'get':[
             {'endpoint':'jobb.ini', 'ttl_fallback':5000},

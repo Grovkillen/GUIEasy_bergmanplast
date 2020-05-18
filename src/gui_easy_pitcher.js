@@ -25,7 +25,7 @@ guiEasy.pitcher = async function (processID, processType) {
                 helpEasy.addToLogDOM('With this file you can specify what unit you want to connect to during development...', 0, "info");
             });
     } else {
-        guiEasy.nodes.push({"ip": window.location.hostname, "type":"server"});
+        guiEasy.nodes.push({"ip": window.location.hostname + ":" + window.location.port + "/data/", "type":"server"});
     }
     helpEasy.scheduleFetch(guiEasy.nodes, 0);
     //first make sure the "live" json is populated with data

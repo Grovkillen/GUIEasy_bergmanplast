@@ -120,13 +120,6 @@ helpEasy.updateGraphics["jobb.ini"] = function (object) {
         let jobs = object["planerade"]["jobb"];
         jobs.map(job => {
             helpEasy.createJobDivs(job, jobContainer);
-            if (guiEasy.nodes[helpEasy.getCurrentIndex()]["live"][job] !== undefined) {
-                let machine = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"][job]["maskin"]["id"];
-                let machineContainer = document.getElementById(machine);
-                if (machineContainer !== null) {
-                    console.log(guiEasy.nodes[helpEasy.getCurrentIndex()]["live"][job]);
-                }
-            }
         });
     }
 };
@@ -141,6 +134,7 @@ helpEasy.createJobDivs = function(job, jobContainer) {
             //no element exist, create it
             element = document.createElement("div");
             element.id = job;
+            element.dataset["machine"] = jobData.data.maskin.id;
             element.innerHTML = `
                         <div class="job" id="job-` + job + `">` + job + `</div>
                         <div class="beskrivning" id="job-beskrivning-` + job + `">` + jobData.data.info.beskrivning + `</div>
@@ -172,6 +166,9 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
     }
     if (object["info"]["antal maskiner"] > 0) {
         let machineContainer = document.getElementById("planering-container");
+        if (guiEasy.nodes[helpEasy.getCurrentIndex()]["machines"] === undefined) {
+            guiEasy.nodes[helpEasy.getCurrentIndex()]["machines"] = {};
+        }
         for (let i = 1; i < (object["info"]["antal maskiner"] + 1); i++) {
             let machine = object["maskin " + i];
             let element = document.getElementById("machine-" + i);
@@ -227,6 +224,29 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                     } else {
                         machineContainer.appendChild(element);
                     }
+                    setInterval( function() {
+                        // this one will look for new planned but not placed DOM objects for "jobb"
+                        let plannedDangling = document.querySelectorAll('[data-machine="' + machine.extruder + '"].post-it');
+                        if (plannedDangling.length > 0) {
+                            [...plannedDangling].map(dangler => {
+                                element.getElementsByClassName("job-container")[0].appendChild(dangler);
+                                dangler.removeAttribute("data-machine");
+                            })
+                        }
+                    }, 1000);
+                    setInterval( function() {
+                        //this one will fix the order in the que
+                        let currentList = element.getElementsByClassName("job-container")[0].childNodes;
+                        let serverList = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"]["maskin/" + machine.grupp + "/" + machine.extruder + "/maskin.ini"];
+                        if (currentList.length > 1 && serverList.data !== undefined) {
+                            //we have a list to sort...
+                            serverList = serverList.data.planering.jobb;
+                            for (let i = 0; i < serverList.length; i++) {
+                                let jobToMove = document.getElementById(serverList[i]);
+                                element.getElementsByClassName("job-container")[0].appendChild(jobToMove);
+                            }
+                        }
+                    }, 1000);
                 }
             }
         }
@@ -297,6 +317,7 @@ helpEasy.allowDrop = function(event) {
 };
 
 helpEasy.drop = function(event) {
+    console.log(event);
     let id = event.dataTransfer.getData("text");
     let child = document.getElementById(id);
     let container = document.getElementById("jobs-machine-" + event.target.id);
@@ -306,8 +327,8 @@ helpEasy.drop = function(event) {
         i++;
     let args = `updatePlanner|
         [job=` + id + `]
-        [addedTo=` + event.target.getAttribute("machine") + `]
-        [addedToGroup=` + event.target.getAttribute("group") + `]
+        [addedTo=` + event.target.getAttribute("data-machine") + `]
+        [addedToGroup=` + event.target.getAttribute("data-group") + `]
         [jobQueIndex=` + i + `]
     `;
     helpEasy.webhook(args);
