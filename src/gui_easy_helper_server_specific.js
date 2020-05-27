@@ -192,7 +192,11 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                     element.setAttribute("data-unique", "machine-" + i);
                     element.setAttribute("data-group", machine.grupp);
                     element.innerHTML = `
-                                    <div class="name" id="machine-place-` + machine.extruder + `">` + machine.extruder + `: <div id="machine-` + machine.extruder + `-current-job"> </div> </div>
+                                    <div class="name" id="machine-place-` + machine.extruder + `">` + machine.extruder + `: <div id="machine-` + machine.extruder + `-current-job"> </div> 
+                                      <button class="que" onclick="helpEasy.reSchedule(event)" data-machine="` + machine.extruder + `"` + ` data-group="` + machine.grupp + `" > 
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24px" height="24px"><path d="M 3 4.5 A 1.5 1.5 0 0 0 1.5 6 A 1.5 1.5 0 0 0 3 7.5 A 1.5 1.5 0 0 0 4.5 6 A 1.5 1.5 0 0 0 3 4.5 z M 8 5 A 1.0001 1.0001 0 1 0 8 7 L 21 7 A 1.0001 1.0001 0 1 0 21 5 L 8 5 z M 3 10.5 A 1.5 1.5 0 0 0 1.5 12 A 1.5 1.5 0 0 0 3 13.5 A 1.5 1.5 0 0 0 4.5 12 A 1.5 1.5 0 0 0 3 10.5 z M 8 11 A 1.0001 1.0001 0 1 0 8 13 L 21 13 A 1.0001 1.0001 0 1 0 21 11 L 8 11 z M 3 16.5 A 1.5 1.5 0 0 0 1.5 18 A 1.5 1.5 0 0 0 3 19.5 A 1.5 1.5 0 0 0 4.5 18 A 1.5 1.5 0 0 0 3 16.5 z M 8 17 A 1.0001 1.0001 0 1 0 8 19 L 21 19 A 1.0001 1.0001 0 1 0 21 17 L 8 17 z"/></svg>
+                                      </button>
+                                    </div>
                                     <div class="planner" id="planner-` + i + `"> ` + helpEasy.generateLabelsOfDates() + `</div>
                                     <div class="planner-now"></div>
                                     <div class="job-container" id="jobs-machine-` + machine.extruder + `"></div>
@@ -242,8 +246,10 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                             //we have a list to sort...
                             serverList = serverList.data.planering.jobb;
                             for (let i = 0; i < serverList.length; i++) {
-                                let jobToMove = document.getElementById(serverList[i]);
-                                element.getElementsByClassName("job-container")[0].appendChild(jobToMove);
+                                if (serverList[i].length > 0) {
+                                    let jobToMove = document.getElementById(serverList[i]);
+                                    element.getElementsByClassName("job-container")[0].appendChild(jobToMove);
+                                }
                             }
                         }
                     }, 1000);
@@ -312,6 +318,78 @@ helpEasy.generateLabelsOfDates = function() {
     return html;
 }
 
+helpEasy.reSchedule = function(event) {
+    let eventDetails = {
+        "type": "modal",
+        "args": ["", "change", "order"]
+    };
+    guiEasy.popper.tryCallEvent(eventDetails);
+    let machine = event.target.dataset.machine;
+    let group = event.target.dataset.group;
+    let jobs = document.getElementById("jobs-machine-" + machine).childNodes;
+    let jobContainer = document.getElementById("modal-view");
+    if (jobs.length === 0) {
+        jobContainer.innerText = ("- tomt -").toUpperCase();
+    } else {
+        jobContainer.innerText = "";
+        for (let i = 0; i < jobs.length; i++) {
+            let job = document.createElement("div");
+            job.classList.add("re-arrange-row");
+            job.classList.add("post-it");
+            job.draggable = true;
+            job.setAttribute("data-machine", ' ' + machine + ' ');
+            job.setAttribute("data-group", ' ' + group + ' ');
+            job.setAttribute("data-id", ' ' + jobs[i].id + ' ');
+            let description = document.getElementById("job-beskrivning-" + jobs[i].id).innerText;
+            job.innerHTML = "<div class='job'>" + jobs[i].id + "</div>" + "<div class='beskrivning'>" + description + "</div>";
+            jobContainer.appendChild(job);
+        }
+        const draggables = document.querySelectorAll(".re-arrange-row");
+        let draggingElement = null;
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => {
+                draggable.classList.add('dragging');
+                draggingElement = draggable;
+            })
+
+            draggable.addEventListener('dragend', () => {
+                draggable.classList.remove('dragging');
+                draggingElement = null;
+            })
+
+            draggable.addEventListener('dragover', e => {
+                e.preventDefault();
+                let targetElement = e.target;
+                if (targetElement.className === "beskrivning" || targetElement.className === "job") {
+                    targetElement = e.path[1];
+                }
+                if (targetElement.className === "re-arrange-row post-it dragging") {
+                    return;  // we don't need to change anything
+                }
+                let cursorPosition = e.y;
+                let elementPosition = targetElement.getBoundingClientRect();
+                if (cursorPosition < (elementPosition.y + elementPosition.height / 2 )) {
+                    draggingElement.before(targetElement);
+                }
+                if (cursorPosition > (elementPosition.y + elementPosition.height / 2 )) {
+                    draggingElement.after(targetElement);
+                }
+                let index = Array.from(draggingElement.parentNode.children).indexOf(draggingElement);
+                console.log(index);
+                let args = `updatePlanner|
+                            [job=` + draggingElement.getAttribute("data-id").trim() + `]
+                            [addedTo=` + draggingElement.getAttribute("data-machine").trim() + `]
+                            [addedToGroup=` + draggingElement.getAttribute("data-group").trim() + `]
+                            [jobQueIndex=` + index + `]
+                            `;
+                helpEasy.webhook(args);
+            })
+        })
+    }
+    document.getElementById("modal-title-text").innerText = document.getElementById("modal-title-text").innerText.toUpperCase();
+};
+
 helpEasy.allowDrop = function(event) {
     event.preventDefault();
 };
@@ -322,14 +400,12 @@ helpEasy.drop = function(event) {
     let child = document.getElementById(id);
     let container = document.getElementById("jobs-machine-" + event.target.id);
     container.appendChild(child);
-    let i = 0;
-    while( (child = child.previousSibling) != null )
-        i++;
+    let index = Array.from(container.children).indexOf(child);
     let args = `updatePlanner|
         [job=` + id + `]
         [addedTo=` + event.target.getAttribute("data-machine") + `]
         [addedToGroup=` + event.target.getAttribute("data-group") + `]
-        [jobQueIndex=` + i + `]
+        [jobQueIndex=` + index + `]
     `;
     helpEasy.webhook(args);
 };

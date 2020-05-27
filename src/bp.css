@@ -7,6 +7,7 @@
     --main-warning-color: 239, 72, 61;
     --main-success-color: 0, 174, 65;
     --main-font-color: 4, 82, 146;
+    --material-color: 255, 255, 255;
     --day-width: 200px;
 }
 div.modal.is-black {
@@ -19,6 +20,28 @@ canvas#digital-twin {
     height: 70vh;
     border-radius: 5px;
     background-color: greenyellow;
+}
+img.big {
+    max-width: calc(100% - 6px);
+    border-style: solid;
+    border-color: var(--main-inverted-color-rgba);
+}
+img.small {
+    max-width: 12%;
+    max-height: 7%;
+    border-style: solid;
+    border-color: var(--main-inverted-color-rgba);
+    margin-right: 3px;
+    margin-bottom: 3px;
+}
+img.small.active {
+    border-style: dotted;
+    opacity: 0.5;
+}
+.row.one-line {
+    flex-flow: nowrap!important;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 .post-it {
     text-align: left;
@@ -86,13 +109,35 @@ body > .post-it {
 .job-container > .post-it:nth-child(1):not(.active) {
     margin-left: calc(var(--now-width)*var(--day-width));
 }
+.re-arrange-row {
+    display: flex;
+}
+.re-arrange-row > .beskrivning {
+    display: flex;
+    position: absolute;
+    margin-right: 4px;
+    right: 0;
+    max-width: 70%;
+    max-height: calc(1.25 * var(--default-height-size));
+    text-align: end;
+}
+.re-arrange-row > .beskrivning::after {
+    content: "\2630";
+    margin-left: 4px;
+    margin-right: 14px;
+    cursor: move;
+}
+.re-arrange-row:hover > .beskrivning::after {
+    text-shadow: 0 0 7px rgb(var(--main-font-color));
+}
+.re-arrange-row.dragging {
+    opacity: .5;
+}
 .machine {
     overflow: hidden;
     position: relative;
     border-radius: 5px;
     background-color: rgb(var(--main-bg-color));
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 .machine > .name {
     pointer-events: none;
@@ -100,16 +145,38 @@ body > .post-it {
     color: rgb(var(--main-font-color));
     padding: 5px;
 }
+.machine > .name > div {
+    display: inline-flex;
+}
+.machine > .name > button.que {
+    border-color: rgba(var(--main-inverted-color), 0.25);
+    color: var(--main-font-color-rgba);
+    position: absolute;
+    height: calc(1.45 * var(--default-height-size) + 3px);
+    width: calc(1.45 * var(--default-height-size) + 3px);
+    font-size: calc(0.9 * var(--default-font-size));
+    right: 0;
+    top: 0;
+    pointer-events: all;
+    cursor: pointer;
+    margin-top: 5px;
+}
+.machine > .name > button.que > svg {
+    fill: var(--main-font-color-rgba);
+    transform: translateX(-2px) translateY(calc(8px - 0.2 * var(--default-height-size)));
+}
 .machine > .planner {
     pointer-events: none;
-    margin-bottom: calc(2 * var(--default-height-size));
+    margin-bottom: calc(1.1 * var(--default-height-size));
     background-color: rgb(var(--main-bg-color));
     background-image:
+            /*full line*/
             linear-gradient(90deg,
             rgba(var(--main-font-color), 0.9) 0,
             rgba(var(--main-font-color), 0.9) 1%,
             transparent 1%
             ),
+            /*half line (12-o-clock*/
             linear-gradient(180deg,
             rgb(var(--main-bg-color)) 50%,
             transparent 50%
@@ -120,6 +187,24 @@ body > .post-it {
             rgba(var(--main-font-color), 0.9) 51%,
             transparent 51%
             ),
+            /*extra line (6&18-o-clock*/
+            linear-gradient(180deg,
+            rgb(var(--main-bg-color)) 65%,
+            transparent 65%
+            ),
+            linear-gradient(90deg,
+            transparent 25%,
+            rgba(var(--main-font-color), 0.9) 25%,
+            rgba(var(--main-font-color), 0.9) 26%,
+            transparent 26%
+            ),
+            linear-gradient(90deg,
+            transparent 75%,
+            rgba(var(--main-font-color), 0.9) 75%,
+            rgba(var(--main-font-color), 0.9) 76%,
+            transparent 76%
+            ),
+            /*hour lines*/
             linear-gradient(180deg,
             rgb(var(--main-bg-color)) 70%,
             transparent 70%
@@ -153,12 +238,6 @@ body > .post-it {
             rgba(var(--main-font-color), 0.9) 20%,
             rgba(var(--main-font-color), 0.9) 21%,
             transparent 21%
-            ),
-            linear-gradient(90deg,
-            transparent 25%,
-            rgba(var(--main-font-color), 0.9) 25%,
-            rgba(var(--main-font-color), 0.9) 26%,
-            transparent 26%
             ),
             linear-gradient(90deg,
             transparent 29%,
@@ -219,12 +298,6 @@ body > .post-it {
             rgba(var(--main-font-color), 0.9) 70%,
             rgba(var(--main-font-color), 0.9) 71%,
             transparent 71%
-            ),
-            linear-gradient(90deg,
-            transparent 75%,
-            rgba(var(--main-font-color), 0.9) 75%,
-            rgba(var(--main-font-color), 0.9) 76%,
-            transparent 76%
             ),
             linear-gradient(90deg,
             transparent 79%,
@@ -364,4 +437,52 @@ li.nav-middle-area {
 }
 div.area {
     overflow: hidden;
+}
+.row.meter-data {
+    flex-flow: column!important;
+}
+.row.meter-data >  button {
+    width: fit-content;
+}
+label.material-color::after {
+    background: rgba(var(--material-color), 1);
+}
+.not-allowed {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+}
+button.main-success {
+    color: rgb(var(--main-bg-color));
+}
+button.job-que {
+    position: relative;
+}
+span.dot {
+    height: calc(1.4 * var(--default-font-size));
+    width: calc(1.4 * var(--default-font-size));
+    font-size: calc(0.9 * var(--default-font-size));
+    background-color: rgb(var(--main-bg-color));
+    color: rgb(var(--main-font-color));
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: bold;
+}
+button > span:not(.dot) {
+    margin-left: calc(1.6 * var(--default-font-size));
+}
+div.row:empty {
+    display: block;
+    position: relative;
+}
+div.row:empty::before {
+    position: absolute;
+    content: '...';
+    color: rgb(var(--main-inverted-color));
+    width: fit-content;
+    left: 0;
+    margin-left: 3px;
 }

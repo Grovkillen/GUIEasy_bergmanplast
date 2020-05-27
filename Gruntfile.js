@@ -22,7 +22,7 @@ module.exports = function(grunt) {
                       'src/gui_easy_curly_page.js',
                       'src/gui_easy_curly_icons.js',
                       'src/gui_easy_scrubber.js',
-                      'src/gui_easy_popper.js',
+                      'src/gui_easy_popper_bp.js',
                       'src/gui_easy_popper_sign.js',
                       'src/gui_easy_pitcher.js',
                       'src/gui_easy_butler.js',

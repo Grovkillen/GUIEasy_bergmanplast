@@ -731,6 +731,11 @@ guiEasy.popper.modal = function (modalToOpen) {
     } else {
         document.body.classList.add("modal");
     }
+    if (x === "change" && y === "order") {
+        z.modal = "yep";
+        z.button.close = "yep";
+        z.title = "Justera ordning på jobb...";
+    }
     if (x === "theme" && y === "import") {
         z.modal = "yep";
         z.input.textarea = "yep";
@@ -1118,79 +1123,6 @@ guiEasy.popper.modal = function (modalToOpen) {
         document.getElementById("modal-setup").innerHTML = z.setup;
         document.getElementById("modal-setup").classList.remove("is-hidden");
         guiEasy.current.modal = document.querySelectorAll("[data-modal-settings-table]")[0];
-    }
-    helpEasy.guiUpdaterSettings("fromBrowser");
-    // since gui uses it's own settings this hackish lookup is done for dropdowns
-    if (x === "settings" && y === "gui") {
-        let dropdowns = document.querySelectorAll("[data-gui-dropdown-value]");
-        for (let k = 0; k < dropdowns.length; k++) {
-            if (dropdowns[k].dataset.guiDropdownValue !== "") {
-                dropdowns[k].value = dropdowns[k].dataset.guiDropdownValue;
-            }
-        }
-    }
-    // we want to populate the setup container with html...
-    if (x === "controller" || x === "task" || x === "notification") {
-        setTimeout(function () {
-            guiEasy.forms.setupForm(x);
-        },20);
-    }
-    if (x === "info" && y === "log") {
-        let backlog = helpEasy.logListBacklog();
-        if (backlog.length > 0) {
-            document.getElementById("weblog-container").innerHTML = backlog;
-            let element = guiEasy.nodes[helpEasy.getCurrentIndex()].stats.logjson.lastEntryID;
-            if (element !== undefined) {
-                document.getElementById(element).scrollIntoView();
-            }
-        }
-        guiEasy.loops.weblog = setInterval(function () {
-            let timestamp = guiEasy.nodes[helpEasy.getCurrentIndex()].stats.logjson.timestampLast;
-            if (timestamp === undefined) {
-                timestamp = 0;
-            }
-            let timestamp2 = guiEasy.nodes[helpEasy.getCurrentIndex()].stats.logjson.timestamp;
-            if (timestamp === timestamp2) {
-                // no need to do more
-            } else {
-                let weblogContainer = document.getElementById("weblog-container");
-                let newEntries = helpEasy.logListLive(timestamp);
-                let innerText = weblogContainer.innerText;
-                if (innerText === "Fetching log entries..." && newEntries.length !== 0) {
-                    weblogContainer.innerHTML = newEntries;
-                } else if (newEntries.length !== 0) {
-                    weblogContainer.insertAdjacentHTML('beforeend', newEntries);
-                }
-                let element = guiEasy.nodes[helpEasy.getCurrentIndex()].stats.logjson.lastEntryID;
-                if (element !== undefined && element !== "") {
-                    let holdScroll = document.getElementById("generic-input--auto-scroll").checked;
-                    if (holdScroll === false) {
-                        document.getElementById(element).scrollIntoView({behavior: "smooth"});
-                    }
-                }
-            }
-        }, 100);
-        let inputFilter = document.getElementById("weblog-filter-input");
-        inputFilter.onkeyup = function (event) {
-            if (event.key === "Enter") {
-                let filterValue = inputFilter.value;
-                inputFilter.value = "";
-                let subText = filterValue.split(" ");
-                let html = "";
-                for (let i = 0; i < subText.length; i++) {
-                    html += "<div class='tag with-close' data-click='filter-remove'>" + subText[i] + "</div>";
-                }
-                document.getElementById("weblog-filters").insertAdjacentHTML('beforeend', html);
-                let eventDetails = {
-                    "type": "filter",
-                    "args": [
-                        "filter",
-                        "updated"
-                    ]
-                };
-                guiEasy.popper.tryCallEvent(eventDetails);
-            }
-        }
     }
     //Countdown...
     if (z.countdown > 0) {
@@ -2144,6 +2076,10 @@ guiEasy.popper.area = function (whatToDo) {
 };
 
 guiEasy.popper.update = async function (whatToDo) {
+    if (whatToDo.args.click === "option-vald-linje") {
+        whatToDo.element = document.getElementById("dropdown-option-vald-linje");
+        guiEasy.popper.option(whatToDo);
+    }
     if (whatToDo.args[1] === "location") {
         if (helpEasy.internet() === true) {
             if (defaultSettings.location === undefined) {
@@ -2387,4 +2323,64 @@ guiEasy.popper.favicon = function () {
         }
     }
   helpEasy.favicon(colors);
+};
+
+guiEasy.popper.css = function (blob) {
+    let z = document.documentElement.style;
+    let type = blob.args.alt.split("-")[1];
+    let cssVar = blob.args.change;
+    let newValue = blob.newValue;
+    let inputElement = document.getElementById("css-" + cssVar);
+    if (type === "material") {
+        if (newValue.match("#")) {
+            newValue = helpEasy.hex2rgb(newValue);
+        }
+        inputElement.value = helpEasy.rgb2hex(newValue);
+    }
+    z.setProperty("--" + cssVar, newValue);
+};
+
+guiEasy.popper.option = function (blob) {
+    if (blob.element.options[0].innerText === "- Ingen -") {
+        let machines = document.getElementsByClassName("machine");
+        blob.element.options.length = 0;
+        for (let i = 0; i < machines.length; i++) {
+            blob.element.add(new Option(machines[i].id, machines[i].id));
+        }
+        //load A1...
+        guiEasy.popper.option.loadLine("A1");
+    }
+    if (blob.newValue !== undefined) {
+        if (guiEasy.popper.option.loaded !== blob.newValue) {
+            guiEasy.popper.option.loadLine(blob.newValue);
+        }
+    }
+
+};
+
+guiEasy.popper.option.loadLine = function(line) {
+    guiEasy.popper.option.loaded = line;
+    let jobs = document.getElementById("jobs-machine-" + line).children;
+    let jobsQueContainer = document.getElementById("jobs-que");
+    let activeJobContainer = document.getElementById("active-job");
+    activeJobContainer.innerHTML = "";
+    jobsQueContainer.innerHTML = "";
+    if (jobs.length > 0) {
+        let queHTML = "";
+        let queLength = jobs.length;
+        if (queLength > 3) {
+            queLength = 3;
+        }
+        for (let i = 0; i < queLength; i++) {
+            let active = jobs[i].classList.contains("active");
+            console.log(active);
+            if (active) {
+                queHTML += "<button class='main-inverted job-que'><span class='dot'>" + (i + 1) + "</span><span>" + jobs[i].id + "</span></button>";
+                activeJobContainer.innerHTML = "<button class='main-success'>" + jobs[i].id + "</button>";
+            } else {
+                queHTML += "<button class='main-sunny job-que'><span class='dot'>" + (i + 1) + "</span><span>" + jobs[i].id + "</span></button>";
+            }
+        }
+        jobsQueContainer.innerHTML = queHTML;
+    }
 };
