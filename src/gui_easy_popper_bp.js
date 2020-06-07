@@ -736,6 +736,11 @@ guiEasy.popper.modal = function (modalToOpen) {
         z.button.close = "yep";
         z.title = "Justera ordning på jobb...";
     }
+    if (x === "change" && y === "job") {
+        z.modal = "yep";
+        z.button.close = "yep";
+        z.title = "Godkänn för produktion...";
+    }
     if (x === "theme" && y === "import") {
         z.modal = "yep";
         z.input.textarea = "yep";

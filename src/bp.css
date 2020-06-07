@@ -44,6 +44,7 @@ img.small.active {
     overflow-y: hidden;
 }
 .post-it {
+    position: relative;
     text-align: left;
     border-radius: 5px;
     color: black;
@@ -52,6 +53,29 @@ img.small.active {
     margin: 10px;
     padding: 5px;
     box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+}
+.post-it > button.approve {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 4px;
+    margin-right: 4px;
+    height: calc(0.75 * var(--default-height-size) + 3px);
+    width: calc(0.75 * var(--default-height-size) + 3px);
+}
+.post-it[draggable="false"] {
+    cursor: not-allowed;
+}
+.post-it[draggable="true"] {
+    cursor: move;
+}
+.post-it[draggable="false"]::after {
+    content: "\1f512";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-bottom: 4px;
+    margin-right: 4px;
 }
 .post-it > .beskrivning {
     opacity: 1;
@@ -75,6 +99,9 @@ body > .post-it {
     display: inline-flex;
     box-shadow: unset;
     height: calc(1.2 * var(--default-height-size));
+}
+.job-container > .post-it > button {
+    display: none;
 }
 .job-container > .post-it::before {
     content: "";

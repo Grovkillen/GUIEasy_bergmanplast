@@ -16,7 +16,7 @@ module.exports = function(grunt) {
                       // THESE MUST BE IN CORRECT ORDER.... ADD NEW FILES HERE
                       'src/gui_easy_settings.js',
                       'src/gui_easy_default_settings.js',
-                      'src/gui_easy_helper.js',
+                      'src/gui_easy_helper_bp.js',
                       'src/gui_easy_helper_server_specific.js',
                       'src/gui_easy_curly.js',
                       'src/gui_easy_curly_page.js',

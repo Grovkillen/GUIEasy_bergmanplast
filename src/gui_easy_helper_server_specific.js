@@ -6,7 +6,10 @@ helpEasy.getDataFromNode = function (array, index, endpoint, ttl_fallback) {
     let path = "http://" + array[index].ip + endpoint + "?callback=" + timeStart;
     let nextRun = Date.now() + array[index].stats[endpoint].TTL_fallback;
     fetch(path)
-        .then(res => res.text())
+        .then(res => res.arrayBuffer())
+        .then((arrayBuffer) => {
+            return String.fromCharCode.apply(null, new Uint8Array(arrayBuffer))  //this part is done to allow for parsing ANSI files holding non-ANSI characters
+        })
         .then((dataFromFile) => {
             array[index]["live"][endpoint] = {};
             array[index]["live"][endpoint].raw = dataFromFile;
@@ -125,6 +128,9 @@ helpEasy.updateGraphics["jobb.ini"] = function (object) {
 };
 
 helpEasy.createJobDivs = function(job, jobContainer) {
+        let jobLength = 0.1; //2.4 hour as fall back
+        let jobLengthBefore = 0.042; //1 hour as fall back
+        let jobLengthAfter = 0.042; //1 hour hour as fall back
         let element = document.getElementById(job);
         let jobData = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"]["jobb/" + job + "/jobb.ini"];
         if (helpEasy.findInArray(job, guiEasy.tender.ids) === -1) {
@@ -137,19 +143,36 @@ helpEasy.createJobDivs = function(job, jobContainer) {
             element.dataset["machine"] = jobData.data.maskin.id;
             element.innerHTML = `
                         <div class="job" id="job-` + job + `">` + job + `</div>
+                        <button class="approve main-info" onclick="helpEasy.approveForManufacturing(event)" data-job="` + job + `"` + ` data-machine="` + jobData.data.maskin.id + `"></button>
                         <div class="beskrivning" id="job-beskrivning-` + job + `">` + jobData.data.info.beskrivning + `</div>
                         <div class="antal" id="job-antal-` + job + `">` + jobData.data.jobb.antal + ` ` + jobData.data.jobb.enhet + `</div>
+                        <div class="antal" id="job-tid-` + job + `">` + Math.round((jobLengthBefore+jobLength+jobLengthAfter)*240)/10 + ` timmar</div>
                     `;
-            element.style = "--width-job: 3; --width-before: 0.25; --width-after: 0.25;";
+            element.style.cssText = "--width-job: " + jobLength + "; --width-before: " + jobLengthBefore + "; --width-after: " + jobLengthAfter + ";";
             element.className = "post-it";
-            element.draggable = true;
+            element.draggable = false;
             element.setAttribute("ondragstart", "helpEasy.drag(event)");
             jobContainer.appendChild(element);
         } else if (typeof(element) !== "undefined" && element !== null) {
+                let artikelData = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"]["artikel/" + jobData.data.info.artikelnummer + "/artikel.ini"];
+                if (artikelData !== undefined && jobData.data.jobb.enhet === "m" && typeof parseFloat((artikelData.data.info["m per timme"])) === "number") {
+                    jobLength =  (jobData.data.jobb.antal / artikelData.data.info["m per timme"])/24;
+                }
+                if (artikelData !== undefined && jobData.data.jobb.enhet === "st") {
+                    jobLength = 1;
+                }
+            if (artikelData === undefined) {
+                console.log(jobData.data.info.artikelnummer);
+            }
+                let elementStyle = "--width-job: " + jobLength + "; --width-before: " + jobLengthBefore + "; --width-after: " + jobLengthAfter + ";";
+                if (element.style.cssText !== elementStyle) {
+                    element.style.cssText = elementStyle;
+                }
                 let lookup = [
                     ["job-", job],
                     ["job-beskrivning-", jobData.data.info.beskrivning],
-                    ["job-antal-", jobData.data.jobb.antal + " " + jobData.data.jobb.enhet]
+                    ["job-antal-", jobData.data.jobb.antal + " " + jobData.data.jobb.enhet],
+                    ["job-tid-", Math.round((jobLengthBefore+jobLength+jobLengthAfter)*240)/10 + " timmar"]
                 ]
                 for (let i = 0; i < lookup.length; i++) {
                     let subElement = document.getElementById(lookup[i][0] + job);
@@ -158,6 +181,21 @@ helpEasy.createJobDivs = function(job, jobContainer) {
                     }
                 }
             }
+};
+
+helpEasy.updateGraphics["artikel.ini"] = function (object) {
+    if (object["info"]["antal"] === undefined) {
+        //return;
+    }
+    if (object["info"]["antal"] > 0) {
+        for (let i = 0; i < object["info"]["artiklar"].length; i++) {
+            if (helpEasy.findInArray(object["info"]["artiklar"][i].toLowerCase(), guiEasy.tender.ids) === -1) {
+                guiEasy.tender.ids.push(object["info"]["artiklar"][i]);
+                let endpoint = "artikel/" + object["info"]["artiklar"][i] + "/artikel.ini";
+                helpEasy.scheduleFetch(guiEasy.nodes, helpEasy.getCurrentIndex(), endpoint);
+            }
+        }
+    }
 };
 
 helpEasy.updateGraphics["maskin.ini"] = function (object) {
@@ -241,6 +279,10 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                     setInterval( function() {
                         //this one will fix the order in the que
                         let currentList = element.getElementsByClassName("job-container")[0].childNodes;
+                        let currentListIds = [];
+                        for (let i = 0; i < currentList.length; i++) {
+                            currentListIds.push(currentList[i].id);
+                        }
                         let serverList = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"]["maskin/" + machine.grupp + "/" + machine.extruder + "/maskin.ini"];
                         if (currentList.length > 1 && serverList.data !== undefined) {
                             //we have a list to sort...
@@ -248,7 +290,10 @@ helpEasy.updateGraphics["maskin.ini"] = function (object) {
                             for (let i = 0; i < serverList.length; i++) {
                                 if (serverList[i].length > 0) {
                                     let jobToMove = document.getElementById(serverList[i]);
-                                    element.getElementsByClassName("job-container")[0].appendChild(jobToMove);
+                                    let currentIndex = helpEasy.findInArray(serverList[i], currentListIds);
+                                    if (i !== currentIndex) {
+                                        element.getElementsByClassName("job-container")[0].appendChild(jobToMove);
+                                    }
                                 }
                             }
                         }
@@ -316,7 +361,26 @@ helpEasy.generateLabelsOfDates = function() {
     }
 
     return html;
-}
+};
+
+helpEasy.approveForManufacturing = function(event) {
+    let eventDetails = {
+        "type": "modal",
+        "args": ["", "change", "job"]
+    };
+    guiEasy.popper.tryCallEvent(eventDetails);
+    let machine = event.target.dataset.machine;
+    let job = event.target.dataset.job;
+    let jobContainer = document.getElementById("modal-view");
+    jobContainer.innerHTML = `
+            <div class="row">
+                <input type="checkbox" id="id-cb" data-type="toggle" data-true-text="ej släppt för produktion" data-false-text="släppt för produktion" data-default-value="true">
+                <label class="checkbox" id="label-id-ch" for="id-cb" tabindex="0">
+                    <div class="">ej släppt för produktion</div>
+                </label>
+            </div>
+    `;
+};
 
 helpEasy.reSchedule = function(event) {
     let eventDetails = {
@@ -376,7 +440,6 @@ helpEasy.reSchedule = function(event) {
                     draggingElement.after(targetElement);
                 }
                 let index = Array.from(draggingElement.parentNode.children).indexOf(draggingElement);
-                console.log(index);
                 let args = `updatePlanner|
                             [job=` + draggingElement.getAttribute("data-id").trim() + `]
                             [addedTo=` + draggingElement.getAttribute("data-machine").trim() + `]
