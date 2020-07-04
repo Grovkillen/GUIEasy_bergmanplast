@@ -9,6 +9,7 @@
     --main-font-color: 4, 82, 146;
     --material-color: 255, 255, 255;
     --day-width: 200px;
+    --max-width-page-size: 1500px;
 }
 div.modal.is-black {
     background-color: rgba(255,255,255,1);
@@ -44,76 +45,104 @@ img.small.active {
     overflow-y: hidden;
 }
 .post-it {
-    position: relative;
+    display: flex;
     text-align: left;
+    text-indent: 4px;
     border-radius: 5px;
     color: black;
-    opacity: 0.75;
     background-color: rgb(var(--main-sunny-color));
     margin: 10px;
     padding: 5px;
     box-shadow: 5px 5px 7px rgba(33,33,33,.7);
 }
-.post-it > button.approve {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-top: 4px;
-    margin-right: 4px;
-    height: calc(0.75 * var(--default-height-size) + 3px);
-    width: calc(0.75 * var(--default-height-size) + 3px);
+.post-it > .buttons {
+    --default-height-size: 13px;
+    display: flex;
+    flex-flow: column;
+    margin-left: 4px;
+    padding-block-end: 8px;
 }
-.post-it[draggable="false"] {
+.post-it > .buttons svg {
+    transform: translateX(0) translateY(3px);
+}
+#unplanned-jobs > .post-it[draggable="false"] {
     cursor: not-allowed;
 }
-.post-it[draggable="true"] {
+#unplanned-jobs > .post-it[draggable="true"] {
     cursor: move;
-}
-.post-it[draggable="false"]::after {
-    content: "\1f512";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-bottom: 4px;
-    margin-right: 4px;
 }
 .post-it > .beskrivning {
     opacity: 1;
     overflow: hidden;
 }
+.post-it.reklamation-ja {
+    border-style: solid;
+    border-color: rgb(var(--main-warning-color));
+    border-width: 8px;
+}
+.reklamation {
+    background-color: rgb(var(--main-warning-color));
+}
+.post-it.okörd-ja {
+    border-style: solid;
+    border-color: rgb(var(--main-success-color));
+    border-width: 8px;
+}
+.okörd {
+    background-color: rgb(var(--main-success-color));
+}
+.job-container > .post-it.reklamation-ja {
+    border-bottom: 4px solid rgb(var(--main-warning-color));
+}
+.job-container > .post-it.okörd-ja {
+    border-bottom: 4px solid rgb(var(--main-success-color));
+}
 body > .post-it {
     display: none;
 }
 .job-container {
+    pointer-events: none;
     width: 100%;
     display: flex;
     position: absolute;
     overflow: hidden;
     top: calc(2 * var(--default-height-size));
 }
+.job-container > .post-it > .buttons {
+    display: none;
+}
 .job-container > .post-it {
-    pointer-events: none;
+    pointer-events: all;
+    border: unset;
     border-radius: unset;
-    margin: unset;
     padding: unset;
     display: inline-flex;
     box-shadow: unset;
+    margin: unset;
     height: calc(1.2 * var(--default-height-size));
 }
-.job-container > .post-it > button {
-    display: none;
+.job-container > .post-it > div {
+    min-width: calc((var(--width-job) + var(--width-before) - var(--width-after)) * var(--day-width));
+    max-width: calc((var(--width-job) + var(--width-before) - var(--width-after)) * var(--day-width));
+}
+.job-container > .post-it {
+    min-width: calc((var(--width-before) + var(--width-job) + var(--width-after)) * var(--day-width));
+    max-width: calc((var(--width-before) + var(--width-job) + var(--width-after)) * var(--day-width));
 }
 .job-container > .post-it::before {
+    pointer-events: none;
     content: "";
     background-color: rgba(var(--main-success-color), 0.5);
-    width: calc(var(--width-before) * var(--day-width));
+    min-width: calc(var(--width-before) * var(--day-width));
     max-width: calc(var(--width-before) * var(--day-width));
 }
 .job-container > .post-it::after {
+    pointer-events: none;
     content: "";
     background-color: rgba(var(--main-warning-color), 0.5);
-    width: calc(var(--width-after) * var(--day-width));
+    min-width: calc(var(--width-after) * var(--day-width));
     max-width: calc(var(--width-after) * var(--day-width));
+    left: calc(-1 * var(--width-after) * var(--day-width));
 }
 .job-container > .post-it {
     position: relative;
@@ -122,10 +151,12 @@ body > .post-it {
 .job-container > .post-it > .job {
     display: none;
 }
+.job-container > .post-it > .text {
+    pointer-events: none;
+    width: unset;
+}
 .job-container > .post-it > .beskrivning {
-    text-indent: 3px;
-    width: calc(var(--width-job) * var(--day-width));
-    max-width: calc(var(--width-job) * var(--day-width));
+    text-indent: 5px;
 }
 .job-container > .post-it.active > .beskrivning {
     text-indent: calc(var(--width-done-job, 0) * var(--day-width) + 3px);
@@ -136,13 +167,54 @@ body > .post-it {
 .job-container > .post-it:nth-child(1):not(.active) {
     margin-left: calc(var(--now-width)*var(--day-width));
 }
+.speech-bubble {
+    left: 0;
+    top: 0;
+    padding: 5px;
+    position: absolute;
+    color: rgb(var(--main-bg-color));
+    background: rgb(var(--main-inverted-color));
+    border-radius: 5px;
+}
+.speech-bubble.reklamation-ja {
+    background-color: rgb(var(--main-warning-color));
+}
+.speech-bubble.reklamation-ja:after {
+    border-top-color: rgb(var(--main-warning-color));
+}
+.speech-bubble.okörd-ja {
+    background-color: rgb(var(--main-success-color));
+}
+.speech-bubble.okörd-ja:after {
+    border-top-color: rgb(var(--main-success-color));
+}
+.speech-bubble.custom-width {
+    min-width: var(--custom-width);
+    max-width: var(--custom-width);
+}
+.speech-bubble.is-inactive {
+    display: none;
+}
+.speech-bubble:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top-color: rgb(var(--main-inverted-color));
+    border-bottom: 0;
+    margin-left: -10px;
+    margin-bottom: -10px;
+}
 .re-arrange-row {
     display: flex;
 }
 .re-arrange-row > .beskrivning {
     display: flex;
     position: absolute;
-    margin-right: 4px;
+    margin-right: 20px;
     right: 0;
     max-width: 70%;
     max-height: calc(1.25 * var(--default-height-size));
@@ -150,8 +222,7 @@ body > .post-it {
 }
 .re-arrange-row > .beskrivning::after {
     content: "\2630";
-    margin-left: 4px;
-    margin-right: 14px;
+    margin-left: 10px;
     cursor: move;
 }
 .re-arrange-row:hover > .beskrivning::after {
@@ -163,8 +234,18 @@ body > .post-it {
 .machine {
     overflow: hidden;
     position: relative;
-    border-radius: 5px;
+    border-width: 5px;
     background-color: rgb(var(--main-bg-color));
+    margin-bottom: 5px;
+    margin-top: 5px;
+    border-top-style: solid;
+    border-top-color: rgb(var(--main-bg-color));
+    border-bottom-style: solid;
+    border-bottom-color: rgb(var(--main-bg-color));
+}
+.machine.hovering {
+    border-top-color: rgb(var(--main-font-color));
+    border-bottom-color: rgb(var(--main-font-color));
 }
 .machine > .name {
     pointer-events: none;
@@ -182,7 +263,7 @@ body > .post-it {
     height: calc(1.45 * var(--default-height-size) + 3px);
     width: calc(1.45 * var(--default-height-size) + 3px);
     font-size: calc(0.9 * var(--default-font-size));
-    right: 0;
+    right: 8px;
     top: 0;
     pointer-events: all;
     cursor: pointer;
@@ -362,10 +443,12 @@ body > .post-it {
 }
 .planner > label {
     overflow-x: hidden;
-    pointer-events: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    direction: rtl;
     display: table-cell;
     border: unset;
-    font-size: calc( 12 * var(--day-width) / 200 + 6px);
+    font-size: calc(var(--day-width) / 50 + 10px);
     width: calc(var(--day-width));
     min-width: calc(var(--day-width));
     max-width: calc(var(--day-width));
@@ -381,6 +464,7 @@ body > .post-it {
     color: rgb(var(--main-bg-color));
 }
 .planner-now {
+    pointer-events: none;
     display: flex;
     position: absolute;
     top: calc(2 * var(--default-height-size));
@@ -501,6 +585,22 @@ span.dot {
 button > span:not(.dot) {
     margin-left: calc(1.6 * var(--default-font-size));
 }
+div.row.hide-job {
+    margin-top: 100px;
+    margin-left: 10px;
+    margin-right: 10px;
+    opacity: 0.2;
+}
+div.row.hide-job > button {
+    width: 100%;
+    border-style: dashed;
+}
+div.row.hide-job:hover {
+    opacity: 1;
+}
+div.row.hide-job:hover > button {
+    border-style: solid;
+}
 div.row:empty {
     display: block;
     position: relative;
@@ -512,4 +612,30 @@ div.row:empty::before {
     width: fit-content;
     left: 0;
     margin-left: 3px;
+}
+.footer.padding {
+    padding-top: 400px;
+}
+.waiting-for-server-update {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.3;
+}
+@media (min-width: 1000px) {
+    .machine > .name > button.que {
+        position: absolute;
+        top: 0;
+    }
+    .post-it > .text {
+        width: unset;
+    }
+}
+@media (max-width: 999px) {
+    .machine > .name > button.que {
+        position: fixed;
+        top: unset;
+    }
+    .post-it > .text {
+        width: 95%;
+    }
 }

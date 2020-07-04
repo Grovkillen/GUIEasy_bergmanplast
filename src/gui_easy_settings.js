@@ -46,7 +46,7 @@ const guiEasy = {
         'maxToKeep': 5,                                         //Minutes...
         'minToKeep': 1,
         'intervalGUIupdater': 1000,                             //ms
-        'intervalTimeKeeper': 25,                               //min period in-between fetches (bump this to 50-100 if the servers isn't keeping up)
+        'intervalTimeKeeper': 100,                               //we set this as a minimum interval between idling fetches... updates are fetched directly (within 5000 msec) but to be sure no data is left behind we RoundRobin the array
         'maxToKeepMs': function () {
             return guiEasy.maxToKeep * 60 * 1000;
         },
@@ -91,6 +91,7 @@ const guiEasy = {
         'get':[
             {'endpoint':'jobb.ini', 'ttl_fallback':5000},
             {'endpoint':'maskin.ini', 'ttl_fallback':5000},
+            {'endpoint':'order.ini', 'ttl_fallback':5000},
             {'endpoint':'artikel.ini', 'ttl_fallback':60000},
             {'endpoint':'helgdagar.ini', 'ttl_fallback':86400000}
         ],
@@ -100,8 +101,8 @@ const guiEasy = {
     },
     'fetchingWait': "Hämtning ej klar, var god vänta...",
     'tabs': {
-        'left': ['start', 'planering', 'körning'],
-        'right': ['historik', 'info', 'kvalitét']
+        'left': ['start', 'planering', 'produktion', 'leverans'],
+        'right': [ 'info', 'kvalitét', 'historik']
     },
     'guiStats': {           //Not to be mistaken for the unit's stats, this is the queen bee gui buildup stats
         'pageSize': 0,      //the other is how the unit themselves are doing fetch-wise

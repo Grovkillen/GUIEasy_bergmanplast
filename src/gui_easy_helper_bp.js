@@ -230,7 +230,7 @@ const helpEasy = {
                 index = i;
             }
         }
-        array[index][0] = Date.now();
+        array[index][0] = 0;
         array.sort();
     },
     'schedulerDelay': function (array, index, delay) {
@@ -267,39 +267,27 @@ const helpEasy = {
             //first run
             let endpoints = guiEasy.endpoints.get;
             guiEasy.fetchCount = {"max": 0, "current": 0, "error": 0};
-            array[index]["live"] = {};
-            array[index]["history"] = {};
-            array[index]["scheduler"] = [];
+            if (array[index]["live"] === undefined) {
+                array[index]["live"] = {};
+            }
+            if (array[index]["scheduler"] === undefined) {
+                array[index]["scheduler"] = [];
+            }
             for (let i=0; i < endpoints.length; i++) {
                 let endpoint = endpoints[i].endpoint;
-                if (endpoints[i].ttl_fallback === undefined || endpoints[i].ttl_fallback > guiEasy.endpoints.defaultTTL()) {
-                    //These endpoints can be fetched once the gui has loaded... to speed up build-up
-                    array[index].stats[endpoint] = {
-                        "TTL_fallback": guiEasy.endpoints.defaultTTL(),
-                        "run": -1,
-                        "timestamp": Date.now()
-                    };
-                    let nextRun = Date.now() + i * guiEasy.fetchSettings.intervalTimeKeeper + 2000;
-                    array[index]["scheduler"].push([nextRun, endpoint]);
-                    array[index]["scheduler"].sort();
-                } else {
-                    array[index].stats[endpoint] = {
-                        "TTL_fallback": endpoints[i].ttl_fallback,
-                        "run": -1,
-                        "timestamp": Date.now()
-                    };
-                    array[index]["scheduler"].push([0, endpoint]);
-                    array[index]["scheduler"].sort();
-                    let delayExecution = guiEasy.fetchCount.max * guiEasy.fetchSettings.intervalTimeKeeper;
-                    setTimeout(function (){
-                        helpEasy.getDataFromNode(array, index , endpoint, endpoints[i].ttl_fallback);
-                    }, delayExecution);
-                    guiEasy.fetchCount.max++;
-                }
+                //These endpoints can be fetched once the gui has loaded... to speed up build-up
+                array[index].stats[endpoint] = {
+                    "TTL_fallback": guiEasy.endpoints.defaultTTL(),
+                    "run": -1,
+                    "timestamp": Date.now()
+                };
+                let nextRun = Date.now() + i * guiEasy.fetchSettings.intervalTimeKeeper + 2000;
+                array[index]["scheduler"].push([nextRun, endpoint]);
+                array[index]["scheduler"].sort();
+                helpEasy.getDataFromNode(array, index , endpoint, guiEasy.endpoints.defaultTTL());
             }
         } else {
             //relay runner
-            let x = guiEasy.fetchSettings;
             if (array[index].stats[endpoint] === undefined) {
                 array[index].stats[endpoint] = {
                     "TTL_fallback": 5000,
@@ -311,16 +299,6 @@ const helpEasy = {
             }
             let TTL_fallback = array[index].stats[endpoint].TTL_fallback;
             helpEasy.getDataFromNode(array, index , endpoint, TTL_fallback);
-            // take a snapshot (plus timestamp it) of the endpointData array and store it
-            let temp = Object.assign({}, array[index]["live"][endpoint]);
-            temp.fetched = Date.now();
-            if (array[index]["history"][endpoint] === undefined) {
-                array[index]["history"][endpoint] = [];
-            }
-            array[index]["history"][endpoint].push(temp);
-            if ( array[index]["history"][endpoint].length > ( x.maxToKeep * x.maxToKeepMs - 1 )) {
-                array[index]["history"][endpoint].shift();
-            }
         }
     },
     'sortOptionsInSelect': function (elementID) {
@@ -515,7 +493,7 @@ const helpEasy = {
     'findInArray': function (needle, haystack) {
         let lowercaseHaystack = [];
         for (let i = 0; i < haystack.length; i++) {
-            lowercaseHaystack.push(haystack[i].toLowerCase());
+            lowercaseHaystack.push(haystack[i].toString().toLowerCase());
         }
         return lowercaseHaystack.indexOf(needle);
     },

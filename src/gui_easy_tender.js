@@ -1,16 +1,67 @@
 /* GUIEasy  Copyright (C) 2019-2020  Jimmy "Grovkillen" Westberg */
 //HERE WE ADD REPEATING DATA FETCH FROM UNIT
 guiEasy.tender = function (processID, processType) {
-    guiEasy.tender.ids = [];
+    if (guiEasy.tender.ids === undefined) {
+        guiEasy.tender.ids = [];
+    }
     let maxMissed = 1;
     let missedBuffer = 15;
     let timestampStart = Date.now();
+    let jobsToUpdate = [];
+
+    //data fetcher (fast lane)
+    setInterval( function () {
+        let jobs  = document.getElementsByClassName("post-it");
+        if (jobs.length > 0) {
+            Array.from(jobs).map(job => {
+                if (job.dataset.clientTimestamp > job.dataset.serverTimestamp) {
+                    job.classList.add("waiting-for-server-update");
+                    if (helpEasy.findInArray(job.id, jobsToUpdate) === -1) {
+                        jobsToUpdate.push(job.id);
+                    }
+                } else {
+                    job.dataset.clientTimestamp = job.dataset.serverTimestamp;
+                    job.classList.remove("waiting-for-server-update");
+                }
+            })
+        }
+        if (jobsToUpdate.length > 0) {
+            let loopCount = 0;
+            let fetchInterval = setInterval(function () {
+                loopCount++;
+                if (loopCount > 12) {
+                    clearInterval(fetchInterval);
+                } else if (jobsToUpdate.length < 1) {
+                    clearInterval(fetchInterval);
+                } else {
+                    helpEasy.schedulerBump(guiEasy.nodes[helpEasy.getCurrentIndex()]["scheduler"], "jobb.ini");
+                    helpEasy.schedulerBump(guiEasy.nodes[helpEasy.getCurrentIndex()]["scheduler"], "jobb/" + jobsToUpdate[0] + "/jobb.ini");
+                    guiEasy.current.gui = helpEasy.getCurrentIndex();
+                    let object = guiEasy.nodes[helpEasy.getCurrentIndex()]["live"];
+                    let keys = Object.keys(object);
+                    keys.map(key => {
+                        if (key.includes("maskin.ini")) {
+                            helpEasy.schedulerBump(guiEasy.nodes[helpEasy.getCurrentIndex()]["scheduler"], key);
+                        }
+                    });
+                    //clean up
+                    document.getElementById(jobsToUpdate[0]).dataset.addedTo = "";
+                    document.getElementById(jobsToUpdate[0]).dataset.addedToGroup = "";
+                    jobsToUpdate.shift();
+                }
+            }, 2500);
+        }
+    }, 1000);
+
     //data fetcher
     setInterval(function () {
         let timestampNow = Date.now();
         let x = guiEasy.nodes;
         let bufferTime = guiEasy.fetchSettings.intervalTimeKeeper;
         for (let i = 0; i < x.length; i++) {
+            if (x[i].scheduler[0] === undefined) {
+                return;
+            }
             if (x[i].stats.lastCheck === undefined) {
                 x[i].stats.lastCheck = timestampNow;
             }
@@ -24,8 +75,7 @@ guiEasy.tender = function (processID, processType) {
             if (
                 x[i].stats.error < (maxMissed + 1) &&
                 x[i].scheduler[0][0] < timestampNow &&
-                bufferTime < (timestampNow - x[i].stats.lastRun) &&
-                bufferTime < (timestampNow - x[i].stats.lastCheck)
+                bufferTime < (timestampNow - x[i].stats.lastRun)
             ) {
                 x[i].stats.lastCheck = timestampNow;
                 let endpoint = x[i].scheduler[0][1];
@@ -39,9 +89,9 @@ guiEasy.tender = function (processID, processType) {
             }
         }
     }, 10);
+
     //gui updater
     setInterval(function () {
-        //helpEasy.guiUpdater();
         //Lookup if internet is found
         if (
             helpEasy.internet() === false
@@ -70,4 +120,5 @@ guiEasy.tender = function (processID, processType) {
     }, guiEasy.fetchSettings.intervalGUIupdater);
 
     helpEasy.processDone(processID, processType);
+
 };

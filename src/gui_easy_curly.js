@@ -278,16 +278,16 @@ guiEasy.curly.navbar.tab = function (name) {
 guiEasy.curly.drawer = function (arg) {
     let type = arg[0];
     let html = "";
-    if (type === "orders") {
+    if (type === "jobb") {
         let x = defaultSettings.css.variables;
         let columnRowsMax = Math.round((x.length + 1) / 3 + 1);
         //  data-open="is-full-size", "is-quarter-size", "is-half-size", "is-small-size" ... no size setting will make it auto height.
         html =  `
-                    <div class="bottom-drawer is-inactive" data-open="is-half-size" id="drawer-orders" data-close="is-inactive">
-                        <div class="bottom-tab" tabindex="0" data-click="drawer-orders">
-                        <div id="custom-orders-settings"></div>
-                        {{ICON-ORDERS}}
-                        Ordrar
+                    <div class="bottom-drawer is-inactive" data-open="is-half-size" id="drawer-jobs" data-close="is-inactive">
+                        <div class="bottom-tab" tabindex="0" data-click="drawer-jobs">
+                        <div id="custom-jobs-settings"></div>
+                        {{ICON-JOBB}}
+                        Jobb
                         </div>
                         <div class="bottom-container">
                             <div class="area" id="unplanned-jobs">

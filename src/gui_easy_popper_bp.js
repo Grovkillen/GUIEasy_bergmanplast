@@ -23,6 +23,7 @@ guiEasy.popper.events = function() {
     document.addEventListener('click', guiEasy.popper.click, true);
     document.addEventListener('change', guiEasy.popper.change, true);
     document.addEventListener('focusout', guiEasy.popper.focus, true);
+    document.addEventListener('mouseover', guiEasy.popper.mouseover, true);
     window.addEventListener('gamepadconnected', guiEasy.popper.gamepad, false);
     window.addEventListener('gamepaddisconnected', guiEasy.popper.gamepad, false);
 };
@@ -666,9 +667,11 @@ guiEasy.popper.menu = function (menuToOpen) {
 guiEasy.popper.drawer = function (drawerToOpen) {
     let drawerName = drawerToOpen.args[1];
     let drawerObject = document.getElementById("drawer-" + drawerName);
+    let footerObject = document.getElementsByClassName("footer")[0];
     let x = drawerObject.dataset;
     drawerObject.classList.toggle(x.close);
     drawerObject.classList.toggle(x.open);
+    footerObject.classList.toggle("padding");
     helpEasy.addToLogDOM("drawer: " + drawerName, 1);
 };
 
@@ -734,12 +737,6 @@ guiEasy.popper.modal = function (modalToOpen) {
     if (x === "change" && y === "order") {
         z.modal = "yep";
         z.button.close = "yep";
-        z.title = "Justera ordning på jobb...";
-    }
-    if (x === "change" && y === "job") {
-        z.modal = "yep";
-        z.button.close = "yep";
-        z.title = "Godkänn för produktion...";
     }
     if (x === "theme" && y === "import") {
         z.modal = "yep";
@@ -2345,6 +2342,78 @@ guiEasy.popper.css = function (blob) {
     z.setProperty("--" + cssVar, newValue);
 };
 
+guiEasy.popper.mouseover = function (event) {
+    let element = event.target;
+    let popup = document.getElementById("job-information-popup");
+    popup.classList.remove("custom-width");
+    popup.classList.remove("reklamation-ja");
+    popup.classList.remove("okörd-ja");
+    if (element.classList.contains("post-it")) {
+        popup.classList.remove("is-inactive");
+        let grandParent = element.parentElement.parentElement;
+        if (grandParent.dataset.machine !== undefined) {
+            popup.innerText = element.innerText;
+            if (element.classList.contains("reklamation-ja")) {
+                popup.classList.add("reklamation-ja");
+            }
+            if (element.classList.contains("okörd-ja")) {
+                popup.classList.add("okörd-ja");
+            }
+            let positionJob = guiEasy.popper.mouseover.getRect(element);
+            let popupSize = popup.getBoundingClientRect();
+            let leftPosition = positionJob.left + (positionJob.right - positionJob.left)/2 - popupSize.width/2;
+            if (leftPosition < 0) {
+                let shrinkSize = popupSize.width/2 + leftPosition;
+                popup.style.cssText = "--custom-width: " + (popupSize.width - shrinkSize / 2) + "px;";
+                popup.classList.add("custom-width");
+                popupSize = popup.getBoundingClientRect();
+                leftPosition = positionJob.left + (positionJob.right - positionJob.left)/2 - popupSize.width/2;
+            }
+            let popupPseudoSize = window.getComputedStyle(popup, ":after").marginBottom;
+            popupPseudoSize = parseFloat(popupPseudoSize);
+            let topPosition = positionJob.top - popupSize.height + popupPseudoSize/2;
+            popup.style.left = leftPosition + "px";
+            popup.style.top = topPosition + "px";
+        }
+    } else {
+        popup.classList.add("is-inactive");
+        popup.innerText = "";
+        popup.style.left = "0";
+        popup.style.top = "0";
+        popup.style.cssText = "";
+        let leavingElement = document.querySelectorAll(".hovering");
+        leavingElement.forEach(element => {
+            element.classList.remove("hovering");
+        });
+    }
+};
+
+guiEasy.popper.mouseover.getRect = function( _el ) {
+    let target = _el,
+        target_width = target.offsetWidth,
+        target_height = target.offsetHeight,
+        gleft = 0,
+        gtop = 0,
+        rect = {};
+
+    let moonwalk = function( _parent ) {
+        if (!!_parent) {
+            gleft += _parent.offsetLeft;
+            gtop += _parent.offsetTop;
+            moonwalk( _parent.offsetParent );
+        } else {
+            return rect = {
+                top: target.offsetTop + gtop,
+                left: target.offsetLeft + gleft,
+                bottom: (target.offsetTop + gtop) + target_height,
+                right: (target.offsetLeft + gleft) + target_width
+            };
+        }
+    };
+    moonwalk( target.offsetParent );
+    return rect;
+}
+
 guiEasy.popper.option = function (blob) {
     if (blob.element.options[0].innerText === "- Ingen -") {
         let machines = document.getElementsByClassName("machine");
@@ -2378,12 +2447,11 @@ guiEasy.popper.option.loadLine = function(line) {
         }
         for (let i = 0; i < queLength; i++) {
             let active = jobs[i].classList.contains("active");
-            console.log(active);
             if (active) {
                 queHTML += "<button class='main-inverted job-que'><span class='dot'>" + (i + 1) + "</span><span>" + jobs[i].id + "</span></button>";
                 activeJobContainer.innerHTML = "<button class='main-success'>" + jobs[i].id + "</button>";
             } else {
-                queHTML += "<button class='main-sunny job-que'><span class='dot'>" + (i + 1) + "</span><span>" + jobs[i].id + "</span></button>";
+                queHTML += "<button class='main-sunny job-que' onclick='helpEasy.loadJobProduction(\"" + jobs[i].id + "\")'><span class='dot'>" + (i + 1) + "</span><span>" + jobs[i].id + "</span></button>";
             }
         }
         jobsQueContainer.innerHTML = queHTML;
